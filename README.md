@@ -1,2 +1,3 @@
 # Roadbed
-Shared base C# solution with re-usable class libraries
+
+A .NET solution containing a series of C# class library projects.
