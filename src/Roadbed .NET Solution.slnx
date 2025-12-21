@@ -1,9 +1,14 @@
 <Solution>
+  <Folder Name="/Modules/">
+    <Project Path="Roadbed.Common/Roadbed.Common.csproj" />
+    <Project Path="Roadbed.Net/Roadbed.Net.csproj" Id="b63606f8-9536-4835-afe5-220702504e0a" />
+  </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
     <File Path="CodeCoverage.runsettings" />
   </Folder>
-  <Project Path="Roadbed.Common/Roadbed.Common.csproj" />
-  <Project Path="Roadbed.Net/Roadbed.Net.csproj" Id="b63606f8-9536-4835-afe5-220702504e0a" />
-  <Project Path="Roadbed.Test.Unit/Roadbed.Test.Unit.csproj" Id="fbf9b0a0-cef4-4b44-961e-e64ef4464b2f" />
+  <Folder Name="/Test Projects/">
+    <Project Path="Roadbed.Test.Integration/Roadbed.Test.Integration.csproj" Id="c5dbc51d-c123-456a-9759-5c06fa0a0ef7" />
+    <Project Path="Roadbed.Test.Unit/Roadbed.Test.Unit.csproj" Id="fbf9b0a0-cef4-4b44-961e-e64ef4464b2f" />
+  </Folder>
 </Solution>
