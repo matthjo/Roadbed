@@ -4,5 +4,6 @@
     <File Path="CodeCoverage.runsettings" />
   </Folder>
   <Project Path="Roadbed.Common/Roadbed.Common.csproj" />
+  <Project Path="Roadbed.Net/Roadbed.Net.csproj" Id="b63606f8-9536-4835-afe5-220702504e0a" />
   <Project Path="Roadbed.Test.Unit/Roadbed.Test.Unit.csproj" Id="fbf9b0a0-cef4-4b44-961e-e64ef4464b2f" />
 </Solution>
