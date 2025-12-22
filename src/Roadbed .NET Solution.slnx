@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/Modules/">
     <Project Path="Roadbed.Common/Roadbed.Common.csproj" />
+    <Project Path="Roadbed.Crud/Roadbed.Crud.csproj" Id="46bc9dfb-a8a2-4e36-a782-40a22e35615e" />
     <Project Path="Roadbed.Net/Roadbed.Net.csproj" Id="b63606f8-9536-4835-afe5-220702504e0a" />
   </Folder>
   <Folder Name="/Solution Items/">

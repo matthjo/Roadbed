@@ -1,3 +1,12 @@
-# Roadbed
+<h1 align="center">
+  <img src="docs/assets/icon-intersection-100.png" alt="Roadbed" width="100" />
+  <br />
+  Roadbed
+  <br />
 
-A .NET solution containing a series of C# class library projects.
+</h1>
+<hr>
+
+This is a collection of utilities, helpers, and **infrastructure** to support the creation of tools for the core **Domain layer** (business logic).
+
+

@@ -1,11 +1,11 @@
 ﻿/*
  * The namespace Roadbed.Common.Extensions was removed on purpose and replaced with Roadbed so that no additional using statements are required.
  */
+
 namespace Roadbed;
 
 using System.Reflection;
 using Roadbed.Common;
-using Roadbed.Common.Services;
 
 /// <summary>
 /// Extensions for common Assembly operations.
@@ -64,7 +64,7 @@ public static class CommonAssemblyExtension
     /// </remarks>
     public static CommonEmbeddedResourceResponse ReadTextResource(this Assembly assembly, string fileAndExtensionWithFullNamespace)
     {
-        return CommonAssemblyService.ReadTextResource(
+        return CommonAssembly.ReadTextResource(
             assembly,
             fileAndExtensionWithFullNamespace);
     }

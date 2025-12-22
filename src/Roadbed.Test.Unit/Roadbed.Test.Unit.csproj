@@ -5,26 +5,29 @@
 		<LangVersion>latest</LangVersion>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+
+		<!-- Make sure any documentation comments which are included in code get checked for syntax during the build -->
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Compile Remove="Net\**" />
-	  <EmbeddedResource Remove="Net\**" />
-	  <None Remove="Net\**" />
+		<Compile Remove="Net\**" />
+		<EmbeddedResource Remove="Net\**" />
+		<None Remove="Net\**" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<Compile Remove="Common\CommonTaskExtensionTests.cs" />
 		<Compile Remove="InMemoryLogger.cs" />
-		<Compile Remove="Mocks\UnitSimpleService.cs" />
+		<Compile Remove="Crud\Mocks\UnitSimpleService.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Remove="Mocks\EmbeddedTextDocument.txt" />
+		<None Remove="Crud\Mocks\EmbeddedTextDocument.txt" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<EmbeddedResource Include="Mocks\EmbeddedTextDocument.txt" />
+		<EmbeddedResource Include="Common\Mocks\EmbeddedTextDocument.txt" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -43,6 +46,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Roadbed.Common\Roadbed.Common.csproj" />
+		<ProjectReference Include="..\Roadbed.Crud\Roadbed.Crud.csproj" />
 		<ProjectReference Include="..\Roadbed.Net\Roadbed.Net.csproj" />
 	</ItemGroup>
 

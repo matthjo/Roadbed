@@ -17,11 +17,11 @@ public class CommonEnvironmentServiceTests
     public void CommonEnvironmentService_DevEnvironment_PascalCaseValue()
     {
         // Arrange (Given)
-        CommonEnvironment expectedEnumValue = CommonEnvironment.Development;
+        CommonEnvironmentType expectedEnumValue = CommonEnvironmentType.Development;
         string actualStringValue = "Development";
 
         // Act (When)
-        CommonEnvironment actualEnumValue = CommonEnvironmentService.GetCommonEnvironment(actualStringValue);
+        CommonEnvironmentType actualEnumValue = CommonEnvironment.GetCommonEnvironment(actualStringValue);
 
         // Assert (Then)
         Assert.AreEqual(
@@ -37,11 +37,11 @@ public class CommonEnvironmentServiceTests
     public void CommonEnvironmentService_DevEnvironment_UpperCaseValue()
     {
         // Arrange (Given)
-        CommonEnvironment expectedEnumValue = CommonEnvironment.Development;
+        CommonEnvironmentType expectedEnumValue = CommonEnvironmentType.Development;
         string actualStringValue = "DEV";
 
         // Act (When)
-        CommonEnvironment actualEnumValue = CommonEnvironmentService.GetCommonEnvironment(actualStringValue);
+        CommonEnvironmentType actualEnumValue = CommonEnvironment.GetCommonEnvironment(actualStringValue);
 
         // Assert (Then)
         Assert.AreEqual(
@@ -57,11 +57,11 @@ public class CommonEnvironmentServiceTests
     public void CommonEnvironmentService_LocalEnvironment_PascalCaseValue()
     {
         // Arrange (Given)
-        CommonEnvironment expectedEnumValue = CommonEnvironment.Local;
+        CommonEnvironmentType expectedEnumValue = CommonEnvironmentType.Local;
         string actualStringValue = "Local";
 
         // Act (When)
-        CommonEnvironment actualEnumValue = CommonEnvironmentService.GetCommonEnvironment(actualStringValue);
+        CommonEnvironmentType actualEnumValue = CommonEnvironment.GetCommonEnvironment(actualStringValue);
 
         // Assert (Then)
         Assert.AreEqual(
@@ -77,11 +77,11 @@ public class CommonEnvironmentServiceTests
     public void CommonEnvironmentService_LocalEnvironment_UpperCaseValue()
     {
         // Arrange (Given)
-        CommonEnvironment expectedEnumValue = CommonEnvironment.Local;
+        CommonEnvironmentType expectedEnumValue = CommonEnvironmentType.Local;
         string actualStringValue = "LOCAL";
 
         // Act (When)
-        CommonEnvironment actualEnumValue = CommonEnvironmentService.GetCommonEnvironment(actualStringValue);
+        CommonEnvironmentType actualEnumValue = CommonEnvironment.GetCommonEnvironment(actualStringValue);
 
         // Assert (Then)
         Assert.AreEqual(
@@ -97,11 +97,11 @@ public class CommonEnvironmentServiceTests
     public void CommonEnvironmentService_ProductionEnvironment_PascalCaseValue()
     {
         // Arrange (Given)
-        CommonEnvironment expectedEnumValue = CommonEnvironment.Production;
+        CommonEnvironmentType expectedEnumValue = CommonEnvironmentType.Production;
         string actualStringValue = "Production";
 
         // Act (When)
-        CommonEnvironment actualEnumValue = CommonEnvironmentService.GetCommonEnvironment(actualStringValue);
+        CommonEnvironmentType actualEnumValue = CommonEnvironment.GetCommonEnvironment(actualStringValue);
 
         // Assert (Then)
         Assert.AreEqual(
@@ -117,11 +117,11 @@ public class CommonEnvironmentServiceTests
     public void CommonEnvironmentService_ProductionEnvironment_UpperCaseValue()
     {
         // Arrange (Given)
-        CommonEnvironment expectedEnumValue = CommonEnvironment.Production;
+        CommonEnvironmentType expectedEnumValue = CommonEnvironmentType.Production;
         string actualStringValue = "PRO";
 
         // Act (When)
-        CommonEnvironment actualEnumValue = CommonEnvironmentService.GetCommonEnvironment(actualStringValue);
+        CommonEnvironmentType actualEnumValue = CommonEnvironment.GetCommonEnvironment(actualStringValue);
 
         // Assert (Then)
         Assert.AreEqual(
@@ -137,11 +137,11 @@ public class CommonEnvironmentServiceTests
     public void CommonEnvironmentService_QaEnvironment_PascalCaseValue()
     {
         // Arrange (Given)
-        CommonEnvironment expectedEnumValue = CommonEnvironment.Qa;
+        CommonEnvironmentType expectedEnumValue = CommonEnvironmentType.Qa;
         string actualStringValue = "Test";
 
         // Act (When)
-        CommonEnvironment actualEnumValue = CommonEnvironmentService.GetCommonEnvironment(actualStringValue);
+        CommonEnvironmentType actualEnumValue = CommonEnvironment.GetCommonEnvironment(actualStringValue);
 
         // Assert (Then)
         Assert.AreEqual(
@@ -157,11 +157,11 @@ public class CommonEnvironmentServiceTests
     public void CommonEnvironmentService_QaEnvironment_UpperCaseValue()
     {
         // Arrange (Given)
-        CommonEnvironment expectedEnumValue = CommonEnvironment.Qa;
+        CommonEnvironmentType expectedEnumValue = CommonEnvironmentType.Qa;
         string actualStringValue = "QA";
 
         // Act (When)
-        CommonEnvironment actualEnumValue = CommonEnvironmentService.GetCommonEnvironment(actualStringValue);
+        CommonEnvironmentType actualEnumValue = CommonEnvironment.GetCommonEnvironment(actualStringValue);
 
         // Assert (Then)
         Assert.AreEqual(
@@ -177,11 +177,11 @@ public class CommonEnvironmentServiceTests
     public void CommonEnvironmentService_StagingEnvironment_PascalCaseValue()
     {
         // Arrange (Given)
-        CommonEnvironment expectedEnumValue = CommonEnvironment.Staging;
+        CommonEnvironmentType expectedEnumValue = CommonEnvironmentType.Staging;
         string actualStringValue = "Staging";
 
         // Act (When)
-        CommonEnvironment actualEnumValue = CommonEnvironmentService.GetCommonEnvironment(actualStringValue);
+        CommonEnvironmentType actualEnumValue = CommonEnvironment.GetCommonEnvironment(actualStringValue);
 
         // Assert (Then)
         Assert.AreEqual(
@@ -197,11 +197,11 @@ public class CommonEnvironmentServiceTests
     public void CommonEnvironmentService_UnknownEnvironment_BlankValue()
     {
         // Arrange (Given)
-        CommonEnvironment expectedEnumValue = CommonEnvironment.Unknown;
+        CommonEnvironmentType expectedEnumValue = CommonEnvironmentType.Unknown;
         string actualStringValue = string.Empty;
 
         // Act (When)
-        CommonEnvironment actualEnumValue = CommonEnvironmentService.GetCommonEnvironment(actualStringValue);
+        CommonEnvironmentType actualEnumValue = CommonEnvironment.GetCommonEnvironment(actualStringValue);
 
         // Assert (Then)
         Assert.AreEqual(
@@ -217,11 +217,11 @@ public class CommonEnvironmentServiceTests
     public void CommonEnvironmentService_UnknownEnvironment_SuperValue()
     {
         // Arrange (Given)
-        CommonEnvironment expectedEnumValue = CommonEnvironment.Unknown;
+        CommonEnvironmentType expectedEnumValue = CommonEnvironmentType.Unknown;
         string actualStringValue = "Super";
 
         // Act (When)
-        CommonEnvironment actualEnumValue = CommonEnvironmentService.GetCommonEnvironment(actualStringValue);
+        CommonEnvironmentType actualEnumValue = CommonEnvironment.GetCommonEnvironment(actualStringValue);
 
         // Assert (Then)
         Assert.AreEqual(

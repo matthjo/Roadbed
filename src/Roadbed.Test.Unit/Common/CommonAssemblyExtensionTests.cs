@@ -21,7 +21,7 @@ public class CommonAssemblyExtensionTests
 
         // Act (When)
         CommonEmbeddedResourceResponse actualContent = this.GetType().Assembly.ReadTextResource(
-            "Roadbed.Test.Unit.Mocks.EmbeddedTextDocument.txt");
+            "Roadbed.Test.Unit.Common.Mocks.EmbeddedTextDocument.txt");
 
         // Assert (Then)
         Assert.IsTrue(

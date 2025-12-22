@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Logging.Testing;
 using Microsoft.Extensions.Options;
-using Roadbed.Test.Unit.Mocks;
+using Roadbed.Test.Unit.Crud.Mocks;
 
 /// <summary>
 /// Contains unit tests for verifying the behavior of the CommonClassWithLogging class.

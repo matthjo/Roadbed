@@ -15,11 +15,11 @@ public class CommonStringExtensionTests
     public void CommonStringExtension_CommonEnvironment_VerifyLocalResult()
     {
         // Arrange (Given)
-        CommonEnvironment expectedEnum = CommonEnvironment.Local;
+        CommonEnvironmentType expectedEnum = CommonEnvironmentType.Local;
         string actualString = "LOCAL";
 
         // Act (When)
-        CommonEnvironment actualEnum = actualString.GetCommonEnvironment();
+        CommonEnvironmentType actualEnum = actualString.GetCommonEnvironment();
 
         // Assert (Then)
         Assert.AreEqual(

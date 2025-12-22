@@ -12,7 +12,6 @@ public class NetServiceTests
     /// <summary>
     /// Unit test to verify that content extracted correctly from embedded resource.
     /// </summary>
-    /// <param name="externalCancellationToken"></param>
     /// <returns></returns>
     [TestMethod]
     public async Task NetService_MakeRequestAsync_GetValidJsonResponse()
@@ -33,7 +32,7 @@ public class NetServiceTests
             // Get the token to pass to async methods
             CancellationToken token = cts.Token;
 
-            var netService = await NetService.MakeRequestAsync<string>(request, token);
+            var netService = await NetHttpClient.MakeRequestAsync<string>(request, token);
 
             actualResponse = netService.Data;
         }
