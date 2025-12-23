@@ -4,6 +4,7 @@
 namespace Roadbed.Crud;
 
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 /// <summary>
 /// Base Data Transfer Object (DTO) implementation.
@@ -20,7 +21,6 @@ public abstract record BaseDataTransferObject<TId>
     /// </summary>
     protected BaseDataTransferObject()
     {
-        this.Errors = new List<string>();
     }
 
     #endregion Protected Constructors
@@ -35,6 +35,7 @@ public abstract record BaseDataTransferObject<TId>
     }
 
     /// <inheritdoc />
+    [JsonProperty("id")]
     public virtual TId? Id
     {
         get;
