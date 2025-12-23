@@ -11,7 +11,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MSTest" Version="4.0.1" />
+    <Compile Remove="Net\Mocks\IntegrationObjectAttribute.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MSTest" Version="4.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,6 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Roadbed.Common\Roadbed.Common.csproj" />
+    <ProjectReference Include="..\Roadbed.Crud\Roadbed.Crud.csproj" />
     <ProjectReference Include="..\Roadbed.Net\Roadbed.Net.csproj" />
   </ItemGroup>
 

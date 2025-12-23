@@ -15,8 +15,8 @@ public interface IRepositoryOperationUpdate<in TDtoType, TIdType>
     /// </summary>
     /// <param name="dto">Data Transfer Object (DTO) object.</param>
     /// <param name="cancellationToken">Token to notify when an operation should be canceled.</param>
-    /// <returns>A unit of work representing when operation has been completed.</returns>
-    Task UpdateAsync(TDtoType dto, CancellationToken cancellationToken);
+    /// <returns>An indication representing whether the operation completed successfully.</returns>
+    Task<bool> UpdateAsync(TDtoType dto, CancellationToken cancellationToken);
 
     #endregion Public Methods
 }

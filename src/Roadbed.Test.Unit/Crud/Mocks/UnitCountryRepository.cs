@@ -62,7 +62,7 @@
         }
 
         /// <inheritdoc />
-        public Task DeleteAsync(int id, CancellationToken cancellationToken)
+        public Task<bool> DeleteAsync(int id, CancellationToken cancellationToken)
         {
             var longTask = Task.Run(() =>
             {
@@ -76,6 +76,8 @@
                             break;
                         }
                     }
+
+                    return true;
                 }
             });
 
@@ -108,7 +110,7 @@
         }
 
         /// <inheritdoc />
-        public Task UpdateAsync(UnitCountryRow dto, CancellationToken cancellationToken)
+        public Task<bool> UpdateAsync(UnitCountryRow dto, CancellationToken cancellationToken)
         {
             var longTask = Task.Run(() =>
             {
@@ -118,11 +120,13 @@
                     {
                         if (country.Id == dto.Id)
                         {
-                            country.Name = dto.Name;
-                            country.Code = dto.Code;
+                            this.countries.Remove(country);
+                            this.countries.Add(new UnitCountryRow(dto.Id, dto.Name, dto.Code));
                             break;
                         }
                     }
+
+                    return true;
                 }
             });
 

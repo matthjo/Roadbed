@@ -16,8 +16,8 @@ public interface IEntityOperatioDelete<TDtoType, in TIdType>
     /// </summary>
     /// <param name="id">ID of the Data Transfer Object (DTO) object.</param>
     /// <param name="cancellationToken">Token to notify when an operation should be canceled.</param>
-    /// <returns>A unit of work representing when operation has been completed.</returns>
-    Task DeleteAsync(TIdType id, CancellationToken cancellationToken);
+    /// <returns>An indication representing whether the operation completed successfully.</returns>
+    Task<bool> DeleteAsync(TIdType id, CancellationToken cancellationToken);
 
     #endregion Public Methods
 }

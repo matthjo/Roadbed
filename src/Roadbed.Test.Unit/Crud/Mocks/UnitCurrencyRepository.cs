@@ -63,7 +63,7 @@
         }
 
         /// <inheritdoc />
-        public Task DeleteAsync(long id, CancellationToken cancellationToken)
+        public Task<bool> DeleteAsync(long id, CancellationToken cancellationToken)
         {
             var longTask = Task.Run(() =>
             {
@@ -77,6 +77,8 @@
                             break;
                         }
                     }
+
+                    return true;
                 }
             });
 
@@ -120,7 +122,7 @@
         }
 
         /// <inheritdoc />
-        public Task UpdateAsync(UnitCurrencyRow dto, CancellationToken cancellationToken)
+        public Task<bool> UpdateAsync(UnitCurrencyRow dto, CancellationToken cancellationToken)
         {
             var longTask = Task.Run(() =>
             {
@@ -135,6 +137,8 @@
                             break;
                         }
                     }
+
+                    return true;
                 }
             });
 
