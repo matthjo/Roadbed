@@ -257,6 +257,8 @@ dotnet_diagnostic.IDE0130.severity = none
 # Override StyleCop rules
 dotnet_diagnostic.SA1124.severity = none
 dotnet_diagnostic.SA1633.severity = none
+dotnet_diagnostic.SA1201.severity = none # Temporary. Remove once StyleCop supports .NET 10 feature.
 
 # Override SonarAnalyzer (SonarQube) rules
 dotnet_diagnostic.S3267.severity = none
+dotnet_diagnostic.S1066.severity = none

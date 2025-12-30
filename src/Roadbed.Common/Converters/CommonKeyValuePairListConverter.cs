@@ -67,22 +67,19 @@ public class CommonKeyValuePairListConverter<TKey, TValue>
         IList<CommonKeyValuePair<TKey, TValue>>? value,
         JsonSerializer serializer)
     {
-        if (value == null)
-        {
-            writer.WriteNull();
-            return;
-        }
-
         writer.WriteStartObject();
 
-        foreach (var pair in value)
+        if (value is not null)
         {
-            if (pair.Key is not null)
+            foreach (var pair in value)
             {
-                string keyString = pair.Key.ToString() ?? string.Empty;
+                if ((pair is not null) && (pair.Key is not null))
+                {
+                    string keyString = pair.Key.ToString() ?? string.Empty;
 
-                writer.WritePropertyName(keyString);
-                serializer.Serialize(writer, pair.Value);
+                    writer.WritePropertyName(keyString);
+                    serializer.Serialize(writer, pair.Value);
+                }
             }
         }
 

@@ -1,6 +1,6 @@
-namespace Roadbed.Test.Unit;
+namespace Roadbed.Test.Unit.Common;
 
-using Roadbed.Common.Services;
+using Roadbed.Common;
 
 /// <summary>
 /// Contains unit tests for verifying the behavior of the CommonEnvironmentService class.

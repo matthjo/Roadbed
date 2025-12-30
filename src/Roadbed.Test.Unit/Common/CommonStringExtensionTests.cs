@@ -1,4 +1,4 @@
-namespace Roadbed.Test.Unit;
+namespace Roadbed.Test.Unit.Common;
 
 /// <summary>
 /// Contains unit tests for verifying the behavior of the CommonStringExtensions class.

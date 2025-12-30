@@ -92,30 +92,8 @@ public abstract class BaseEntityWithCrudl<TEntityType, TDtoType, TIdType>
 
         builder.Append($"Create operation called in {typeof(TEntityType).ToString()}. ");
 
-        if (object.Equals(dto, default(TDtoType)))
-        {
-            builder.Append($"DTO is null.");
-        }
-        else
-        {
-            if (object.Equals(dto.Id, default(TIdType)))
-            {
-                builder.Append($"DTO ID is null.");
-            }
-            else
-            {
-                builder.Append($"DTO ID is {dto.Id!.ToString()}.");
-            }
-        }
-
         // Log message
         this.LogTrace(builder.ToString());
-
-        // Null Check
-        if (object.Equals(dto, default(TDtoType)))
-        {
-            return default;
-        }
 
         return await this.Repository.CreateAsync(dto, cancellationToken);
     }
@@ -216,11 +194,7 @@ public abstract class BaseEntityWithCrudl<TEntityType, TDtoType, TIdType>
         }
         else
         {
-            if (object.Equals(dto.Id, default(TIdType)))
-            {
-                builder.Append($"DTO ID is null.");
-            }
-            else
+            if (!object.Equals(dto.Id, default(TIdType)))
             {
                 builder.Append($"DTO ID is {dto.Id!.ToString()}.");
             }

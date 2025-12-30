@@ -6,15 +6,42 @@ namespace Roadbed.Net;
 
 using System;
 using System.Net;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
 
 /// <summary>
-/// Service for managing HttpClient operations.
+/// Service for managing HttpClient operations using IHttpClientFactory.
 /// </summary>
-public static class NetHttpClient
+public class NetHttpClientService
 {
+    #region Private Fields
+
+    /// <summary>
+    /// Factory for creating HttpClient instances.
+    /// </summary>
+    private readonly IHttpClientFactory httpClientFactory;
+
+    #endregion Private Fields
+
+    #region Public Constructors
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NetHttpClientService"/> class.
+    /// </summary>
+    /// <param name="httpClientFactory">Factory for creating HttpClient instances.</param>
+    /// <exception cref="ArgumentNullException">httpClientFactory is null.</exception>
+    public NetHttpClientService(IHttpClientFactory httpClientFactory)
+    {
+        ArgumentNullException.ThrowIfNull(httpClientFactory);
+
+        this.httpClientFactory = httpClientFactory;
+    }
+
+    #endregion Public Constructors
+
     #region Public Methods
 
     /// <summary>
@@ -25,8 +52,30 @@ public static class NetHttpClient
     /// <param name="cancelToken">Token to cancel tasks.</param>
     /// <returns>Http response from the API.</returns>
     /// <exception cref="ArgumentNullException">Request is null.</exception>
-    /// <exception cref="Exception">Raised after the end of the retry pattern is reached.</exception>
     public static async Task<NetHttpResponse<T>> MakeRequestAsync<T>(
+    NetHttpRequest request,
+    CancellationToken cancelToken)
+    {
+        // Fetch from Dependency Injection
+        var factory = ServiceLocator.GetService<IHttpClientFactory>();
+        ArgumentNullException.ThrowIfNull(factory);
+
+        // Create instance
+        NetHttpClientService service = new NetHttpClientService(factory);
+
+        // Return the result
+        return await service.MakeHttpRequestAsync<T>(request, cancelToken);
+    }
+
+    /// <summary>
+    /// Make Http Request.
+    /// </summary>
+    /// <typeparam name="T">Object returned from the API.</typeparam>
+    /// <param name="request">API request.</param>
+    /// <param name="cancelToken">Token to cancel tasks.</param>
+    /// <returns>Http response from the API.</returns>
+    /// <exception cref="ArgumentNullException">Request is null.</exception>
+    public async Task<NetHttpResponse<T>> MakeHttpRequestAsync<T>(
         NetHttpRequest request,
         CancellationToken cancelToken)
     {
@@ -41,14 +90,14 @@ public static class NetHttpClient
             {
                 // Make request with Retry Pattern.
                 HttpResponseMessage message =
-                    await MakeRequestWithBackoffRetryAsync(request, requestMessage, cancelToken);
+                    await this.MakeRequestWithBackoffRetryAsync(request, requestMessage, cancelToken);
 
                 // Add the Data
-                if (message.IsSuccessStatusCode ||
+                if (message.IsSuccessStatusCode &&
                     (message.StatusCode != HttpStatusCode.NotFound))
                 {
                     // Grab the body of the response
-                    string responseBody = await message.Content.ReadAsStringAsync();
+                    string responseBody = await message.Content.ReadAsStringAsync(cancelToken);
 
                     response = NetHttpResponse<T>.Success(
                             (int)message.StatusCode,
@@ -86,58 +135,12 @@ public static class NetHttpClient
                 "Not a successful HTTP call. An unknown error occurred.");
         }
 
-        // Return the Result
         return response;
     }
 
     #endregion Public Methods
 
     #region Private Methods
-
-    /// <summary>
-    /// Create <see cref="HttpClient"/>.
-    /// </summary>
-    /// <param name="request"><see cref="NetHttpRequest"/> to use in the creation of the <see cref="HttpClient"/>.</param>
-    /// <param name="handler"><see cref="HttpClientHandler"/> to use in the creation of the <see cref="HttpClient"/>.</param>
-    /// <returns><see cref="HttpClient"/> based on the <see cref="NetHttpRequest"/>.</returns>
-    /// <exception cref="ArgumentNullException">Request is null.</exception>
-    private static HttpClient CreateHttpClient(NetHttpRequest request, HttpClientHandler handler)
-    {
-        ArgumentNullException.ThrowIfNull(request);
-
-        // Result Container
-        HttpClient client = new HttpClient(handler)
-        {
-            Timeout = TimeSpan.FromSeconds(request.TimeoutInSecondsPerAttempt),
-        };
-
-        // Return Result
-        return client;
-    }
-
-    /// <summary>
-    /// Create <see cref="HttpClientHandler"/>.
-    /// </summary>
-    /// <param name="request"><see cref="NetHttpRequest"/> to use in the creation of the <see cref="HttpClientHandler"/>.</param>
-    /// <returns><see cref="HttpClientHandler"/> based on the <see cref="NetHttpRequest"/>.</returns>
-    /// <exception cref="ArgumentNullException">Request is null.</exception>
-    private static HttpClientHandler CreateHttpClientHandler(NetHttpRequest request)
-    {
-        ArgumentNullException.ThrowIfNull(request);
-
-        // Result Container
-        HttpClientHandler handler = new HttpClientHandler();
-
-        // Compression
-        if (request.EnableCompression)
-        {
-            // Allow support for Deflate or GZip
-            handler.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
-        }
-
-        // Return Result
-        return handler;
-    }
 
     /// <summary>
     /// Create <see cref="HttpRequestMessage"/>.
@@ -149,7 +152,6 @@ public static class NetHttpClient
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        // Result Container
         HttpRequestMessage message = new HttpRequestMessage(
             request.Method,
             request.HttpEndPoint)
@@ -173,24 +175,57 @@ public static class NetHttpClient
         if ((request.Authentication != null) &&
             (request.Authentication.AuthenticationType != NetHttpAuthenticationType.Unknown))
         {
-            string name = string.Empty;
-
-            if (request.Authentication.AuthenticationType == NetHttpAuthenticationType.Basic)
+            string name = request.Authentication.AuthenticationType switch
             {
-                name = "Basic";
-            }
-            else if (request.Authentication.AuthenticationType == NetHttpAuthenticationType.Bearer)
-            {
-                name = "Bearer";
-            }
+                NetHttpAuthenticationType.Basic => "Basic",
+                NetHttpAuthenticationType.Bearer => "Bearer",
+                _ => string.Empty
+            };
 
-            message.Headers.Authorization = new AuthenticationHeaderValue(
-                name,
-                request.Authentication.Value);
+            if (!string.IsNullOrEmpty(name))
+            {
+                message.Headers.Authorization = new AuthenticationHeaderValue(
+                    name,
+                    request.Authentication.Value);
+            }
         }
 
-        // Return Result
         return message;
+    }
+
+    /// <summary>
+    /// Implements the wait logic for the backoff strategy.
+    /// </summary>
+    /// <param name="request"><see cref="NetHttpRequest"/> to use in the backoff calculation.</param>
+    /// <param name="attempt">Count representing which attempt.</param>
+    /// <param name="cancelToken">Token to cancel tasks.</param>
+    /// <returns>Completed Task after the delay.</returns>
+    private static async Task WaitAsync(
+        NetHttpRequest request,
+        int attempt,
+        CancellationToken cancelToken)
+    {
+        // Backoff strategy - increase delay with each attempt
+        var amount = Math.Pow(request.RetryPattern.DelayMultiplierInSeconds, attempt);
+        await Task.Delay(TimeSpan.FromSeconds(amount), cancelToken);
+    }
+
+    /// <summary>
+    /// Create <see cref="HttpClient"/> using the factory.
+    /// </summary>
+    /// <param name="request"><see cref="NetHttpRequest"/> to use in the creation of the <see cref="HttpClient"/>.</param>
+    /// <returns><see cref="HttpClient"/> based on the <see cref="NetHttpRequest"/>.</returns>
+    private HttpClient CreateHttpClient(NetHttpRequest request)
+    {
+        // Create client with named configuration or default
+        string clientName = request.EnableCompression ? "CompressedClient" : "DefaultClient";
+
+        HttpClient client = this.httpClientFactory.CreateClient(clientName);
+
+        // Set timeout per request
+        client.Timeout = TimeSpan.FromSeconds(request.TimeoutInSecondsPerAttempt);
+
+        return client;
     }
 
     /// <summary>
@@ -200,8 +235,7 @@ public static class NetHttpClient
     /// <param name="message">Body of Http Request.</param>
     /// <param name="cancelToken">Token to cancel tasks.</param>
     /// <returns>API response.</returns>
-    /// <exception cref="Exception">Raised after the end of the retry pattern is reached.</exception>
-    private static async Task<HttpResponseMessage> MakeRequestWithBackoffRetryAsync(
+    private async Task<HttpResponseMessage> MakeRequestWithBackoffRetryAsync(
         NetHttpRequest request,
         HttpRequestMessage message,
         CancellationToken cancelToken)
@@ -210,66 +244,46 @@ public static class NetHttpClient
         {
             try
             {
-                using (HttpClientHandler handler = CreateHttpClientHandler(request))
+                using (HttpClient client = this.CreateHttpClient(request))
                 {
-                    using (HttpClient client = CreateHttpClient(request, handler))
-                    {
-                        // Result Container. Wrap with Task timeout incase HttpClient gets hung up.
-                        HttpResponseMessage response = await client.SendAsync(message).WaitAsync(
+                    // Send request with timeout
+                    HttpResponseMessage response = await client.SendAsync(
+                        message,
+                        HttpCompletionOption.ResponseContentRead,
+                        cancelToken)
+                        .WaitAsync(
                             TimeSpan.FromSeconds(request.TimeoutInSecondsPerAttempt),
                             cancelToken);
 
-                        // Determine if we want to try again
-                        if ((response.StatusCode == HttpStatusCode.ServiceUnavailable) ||
-                            (response.StatusCode == HttpStatusCode.RequestTimeout) ||
-                            (response.StatusCode == HttpStatusCode.GatewayTimeout))
-                        {
-                            await WaitAsync(request, attempt, cancelToken);
-
-                            continue;
-                        }
-
-                        // Return Result
-                        return response;
+                    // Determine if we want to try again
+                    if ((response.StatusCode == HttpStatusCode.ServiceUnavailable) ||
+                        (response.StatusCode == HttpStatusCode.RequestTimeout) ||
+                        (response.StatusCode == HttpStatusCode.GatewayTimeout))
+                    {
+                        await WaitAsync(request, attempt, cancelToken);
+                        continue;
                     }
+
+                    return response;
                 }
             }
             catch (HttpRequestException)
             {
-                // Networking issue Occurred
+                // Networking issue occurred
                 await WaitAsync(request, attempt, cancelToken);
             }
             catch (TimeoutException)
             {
-                // Task Timeout Occurred
+                // Task timeout occurred
                 await WaitAsync(request, attempt, cancelToken);
             }
         }
 
-        // Retry Pattern exhausted. Return bad request.
+        // Retry pattern exhausted
         return new HttpResponseMessage(HttpStatusCode.BadRequest)
         {
             Content = new StringContent("Unable to complete Http Request."),
         };
-    }
-
-    /// <summary>
-    /// Implements the wait logic for the backoff strategy.
-    /// </summary>
-    /// <param name="request"><see cref="NetHttpRequest"/> to use in the creation of the <see cref="HttpClient"/>.</param>
-    /// <param name="attempt">Count representing which attempt.</param>
-    /// <param name="cancelToken">Token to cancel tasks.</param>
-    /// <returns>Completed Task after the delay.</returns>
-    private static async Task WaitAsync(
-        NetHttpRequest request,
-        int attempt,
-        CancellationToken cancelToken)
-    {
-        // Backoff Strategy. Increase delay with each attempt.
-        var amount = Math.Pow(request.RetryPattern.DelayMultiplierInSeconds, attempt);
-
-        // exponential backoff waiting retry logic
-        await Task.Delay(TimeSpan.FromSeconds(amount), cancelToken);
     }
 
     #endregion Private Methods

@@ -12,6 +12,10 @@ using Roadbed.Net;
 /// <summary>
 /// CRUD repository for IntegrationObject entity.
 /// </summary>
+/// <remarks>
+/// The 'live' mock API has a daily limit of requests.
+/// The current limit is equal to 100 requests per day. 
+/// </remarks>
 internal class IntegrationObjectRepository
     : IBaseRepositoryWithCrudl<IntegrationObjectRow, string>
 {
@@ -39,7 +43,7 @@ internal class IntegrationObjectRepository
 
         // Make HTTP request
         NetHttpResponse<string> response =
-            await NetHttpClient.MakeRequestAsync<string>(request, cancellationToken);
+            await NetHttpClientService.MakeRequestAsync<string>(request, cancellationToken);
 
         // Verify Response
         if (response.IsSuccessStatusCode)
@@ -67,7 +71,7 @@ internal class IntegrationObjectRepository
 
         // Make HTTP request
         NetHttpResponse<string> response =
-            await NetHttpClient.MakeRequestAsync<string>(request, cancellationToken);
+            await NetHttpClientService.MakeRequestAsync<string>(request, cancellationToken);
 
         // Verify Response
         return response.IsSuccessStatusCode;
@@ -84,7 +88,7 @@ internal class IntegrationObjectRepository
 
         // Make HTTP request
         NetHttpResponse<string> response =
-            await NetHttpClient.MakeRequestAsync<string>(request, cancellationToken);
+            await NetHttpClientService.MakeRequestAsync<string>(request, cancellationToken);
 
         // Verify Response
         if (response.IsSuccessStatusCode)
@@ -119,7 +123,7 @@ internal class IntegrationObjectRepository
 
         // Make HTTP request
         NetHttpResponse<string> response =
-            await NetHttpClient.MakeRequestAsync<string>(request, cancellationToken);
+            await NetHttpClientService.MakeRequestAsync<string>(request, cancellationToken);
 
         // Verify Response
         return response.IsSuccessStatusCode;
@@ -142,7 +146,7 @@ internal class IntegrationObjectRepository
 
         // Make HTTP request
         NetHttpResponse<string> response =
-            await NetHttpClient.MakeRequestAsync<string>(request, cancellationToken);
+            await NetHttpClientService.MakeRequestAsync<string>(request, cancellationToken);
 
         // Verify Response
         if (response.IsSuccessStatusCode)

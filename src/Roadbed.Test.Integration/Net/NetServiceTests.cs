@@ -1,8 +1,11 @@
 namespace Roadbed.Test.Integration;
 
 using System.Net.Http;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Roadbed.Common;
 using Roadbed.Net;
+using Roadbed.Net.Installers;
 using Roadbed.Test.Integration.Net.Mocks;
 
 /// <summary>
@@ -11,6 +14,23 @@ using Roadbed.Test.Integration.Net.Mocks;
 [TestClass]
 public class NetServiceTests
 {
+    #region Public Constructors
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NetServiceTests"/> class.
+    /// </summary>
+    public NetServiceTests()
+    {
+        var services = new ServiceCollection();
+        var configuration = new ConfigurationBuilder().Build();
+        var installer = new InstallNetHttpClient();
+
+        // Install HTTP Client Factory
+        installer.ConfigureServices(services, configuration);
+    }
+
+    #endregion Public Constructors
+
     #region Public Properties
 
     /// <summary>
@@ -151,7 +171,7 @@ public class NetServiceTests
             // Get the token to pass to async methods
             CancellationToken token = cts.Token;
 
-            var netService = await NetHttpClient.MakeRequestAsync<string>(request, token);
+            var netService = await NetHttpClientService.MakeRequestAsync<string>(request, token);
 
             actualResponse = netService.Data;
         }

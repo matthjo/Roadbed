@@ -27,6 +27,7 @@
     <ProjectReference Include="..\Roadbed.Common\Roadbed.Common.csproj" />
     <ProjectReference Include="..\Roadbed.Crud\Roadbed.Crud.csproj" />
     <ProjectReference Include="..\Roadbed.Net\Roadbed.Net.csproj" />
+    <ProjectReference Include="..\Roadbed.Sdk.NationalWeatherService\Roadbed.Sdk.NationalWeatherService.csproj" />
   </ItemGroup>
 
 </Project>

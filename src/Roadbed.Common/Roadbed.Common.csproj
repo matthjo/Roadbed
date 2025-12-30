@@ -19,8 +19,13 @@
 
   <ItemGroup>
     <Compile Remove="Converters\CommonKeyValuePairConverter.cs" />
+    <Compile Remove="Entities\CommonMessagePublisher.cs" />
     <Compile Remove="Extensions\CommonTaskExtensions.cs" />
   </ItemGroup>
+	
+	<ItemGroup>
+		<InternalsVisibleTo Include="Roadbed.Test.Unit" />
+	</ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0">
@@ -31,6 +36,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.1" />
 	  <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.1">
 		  <PrivateAssets>all</PrivateAssets>
 	  </PackageReference>

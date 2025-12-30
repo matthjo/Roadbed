@@ -9,5 +9,7 @@
   </Folder>
   <Project Path="Roadbed.Common/Roadbed.Common.csproj" />
   <Project Path="Roadbed.Crud/Roadbed.Crud.csproj" Id="46bc9dfb-a8a2-4e36-a782-40a22e35615e" />
+  <Project Path="Roadbed.Messaging/Roadbed.Messaging.csproj" Id="766c9d43-21ee-4320-8b00-57ad2291754f" />
   <Project Path="Roadbed.Net/Roadbed.Net.csproj" Id="b63606f8-9536-4835-afe5-220702504e0a" />
+  <Project Path="Roadbed.Sdk.NationalWeatherService/Roadbed.Sdk.NationalWeatherService.csproj" Id="799aa031-d8b5-413f-9868-6d0244ff3ac9" />
 </Solution>

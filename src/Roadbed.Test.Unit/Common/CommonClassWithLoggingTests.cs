@@ -1,4 +1,4 @@
-namespace Roadbed.Test.Unit;
+namespace Roadbed.Test.Unit.Common;
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;

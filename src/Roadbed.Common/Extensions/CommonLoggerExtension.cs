@@ -35,6 +35,10 @@ public static class CommonLoggerExtension
             string.IsNullOrEmpty(key))
         {
             return default;
+            /*
+            Visual Studio doesn't support ignoring a single line of code from code coverage.
+            The "return" causes the 'if' statements closing bracket (}) not to be covered.
+             */
         }
 
         return logger.BeginScope(new Dictionary<string, object> { { key, value } });
@@ -64,6 +68,10 @@ public static class CommonLoggerExtension
             string.IsNullOrEmpty(message))
         {
             return;
+            /*
+            Visual Studio doesn't support ignoring a single line of code from code coverage.
+            The "return" causes the 'if' statements closing bracket (}) not to be covered.
+             */
         }
 
         // Checks if the given logLevel is enabled.

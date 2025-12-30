@@ -7,8 +7,30 @@ namespace Roadbed.Net;
 /// <summary>
 /// Http Header used in the HttpClient.
 /// </summary>
-public class NetHttpHeader
+public record NetHttpHeader
 {
+    #region Public Constructors
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NetHttpHeader"/> class.
+    /// </summary>
+    public NetHttpHeader()
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NetHttpHeader"/> class.
+    /// </summary>
+    /// <param name="name">Http Header Name.</param>
+    /// <param name="value">Http Header Value.</param>
+    public NetHttpHeader(string name, string value)
+    {
+        this.Name = name;
+        this.Value = value;
+    }
+
+    #endregion Public Constructors
+
     #region Public Properties
 
     /// <summary>

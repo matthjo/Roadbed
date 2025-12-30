@@ -1,10 +1,11 @@
-﻿namespace Roadbed.Common.Tests.Converters;
+﻿namespace Roadbed.Test.Unit.Common;
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
+using Roadbed.Common;
 using Roadbed.Common.Converters;
 
 /// <summary>
@@ -16,7 +17,7 @@ public class CommonKeyValuePairListConverterTests
     #region Public Methods
 
     /// <summary>
-    /// Tests that the converter works with JsonSerializerSettings.
+    /// Verifies that the converter works with JsonSerializerSettings.
     /// </summary>
     [TestMethod]
     public void Integration_WithCustomSerializerSettings_ShouldWorkCorrectly()
@@ -25,7 +26,7 @@ public class CommonKeyValuePairListConverterTests
         var settings = new JsonSerializerSettings
         {
             Formatting = Formatting.Indented,
-            NullValueHandling = NullValueHandling.Ignore
+            NullValueHandling = NullValueHandling.Ignore,
         };
 
         var obj = new TestObject
@@ -43,13 +44,57 @@ public class CommonKeyValuePairListConverterTests
         // Assert
         Assert.IsNotNull(deserialized);
         Assert.IsNotNull(deserialized.Data);
-        Assert.AreEqual(1, deserialized.Data.Count);
+        Assert.HasCount(1, deserialized.Data);
         Assert.AreEqual("Key", deserialized.Data[0].Key);
         Assert.AreEqual("Value", deserialized.Data[0].Value);
     }
 
     /// <summary>
-    /// Tests that deserialization handles empty JSON object correctly.
+    /// Verifies that ReadJson works with boolean values.
+    /// </summary>
+    [TestMethod]
+    public void ReadJson_WithBooleanValues_ShouldDeserializeCorrectly()
+    {
+        // Arrange
+        string json = @"{""data"":{""IsActive"":true,""IsDeleted"":false}}";
+
+        // Act
+        var result = JsonConvert.DeserializeObject<TestObjectWithBoolValue>(json);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsNotNull(result.Data);
+        Assert.HasCount(2, result.Data);
+        Assert.AreEqual("IsActive", result.Data[0].Key);
+        Assert.IsTrue(result.Data[0].Value);
+        Assert.AreEqual("IsDeleted", result.Data[1].Key);
+        Assert.IsFalse(result.Data[1].Value);
+    }
+
+    /// <summary>
+    /// Verifies that ReadJson works with decimal values.
+    /// </summary>
+    [TestMethod]
+    public void ReadJson_WithDecimalValues_ShouldDeserializeCorrectly()
+    {
+        // Arrange
+        string json = @"{""data"":{""Price"":19.99,""Tax"":1.50}}";
+
+        // Act
+        var result = JsonConvert.DeserializeObject<TestObjectWithDecimalValue>(json);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.IsNotNull(result.Data);
+        Assert.HasCount(2, result.Data);
+        Assert.AreEqual("Price", result.Data[0].Key);
+        Assert.AreEqual(19.99m, result.Data[0].Value);
+        Assert.AreEqual("Tax", result.Data[1].Key);
+        Assert.AreEqual(1.50m, result.Data[1].Value);
+    }
+
+    /// <summary>
+    /// Verifies that ReadJson handles empty JSON object correctly.
     /// </summary>
     [TestMethod]
     public void ReadJson_WithEmptyObject_ShouldReturnEmptyList()
@@ -63,11 +108,11 @@ public class CommonKeyValuePairListConverterTests
         // Assert
         Assert.IsNotNull(result);
         Assert.IsNotNull(result.Data);
-        Assert.AreEqual(0, result.Data.Count);
+        Assert.IsEmpty(result.Data);
     }
 
     /// <summary>
-    /// Tests that deserialization works with integer keys.
+    /// Verifies that ReadJson works with integer keys.
     /// </summary>
     [TestMethod]
     public void ReadJson_WithIntegerKeys_ShouldDeserializeCorrectly()
@@ -81,7 +126,7 @@ public class CommonKeyValuePairListConverterTests
         // Assert
         Assert.IsNotNull(result);
         Assert.IsNotNull(result.Data);
-        Assert.AreEqual(2, result.Data.Count);
+        Assert.HasCount(2, result.Data);
         Assert.AreEqual(1, result.Data[0].Key);
         Assert.AreEqual("First", result.Data[0].Value);
         Assert.AreEqual(2, result.Data[1].Key);
@@ -89,7 +134,7 @@ public class CommonKeyValuePairListConverterTests
     }
 
     /// <summary>
-    /// Tests that deserialization works with integer values.
+    /// Verifies that ReadJson works with integer values.
     /// </summary>
     [TestMethod]
     public void ReadJson_WithIntegerValues_ShouldDeserializeCorrectly()
@@ -98,12 +143,12 @@ public class CommonKeyValuePairListConverterTests
         string json = @"{""data"":{""Age"":30,""Count"":100}}";
 
         // Act
-        var result = JsonConvert.DeserializeObject<TestObjectWithComplexValue>(json);
+        var result = JsonConvert.DeserializeObject<TestObjectWithIntValue>(json);
 
         // Assert
         Assert.IsNotNull(result);
         Assert.IsNotNull(result.Data);
-        Assert.AreEqual(2, result.Data.Count);
+        Assert.HasCount(2, result.Data);
         Assert.AreEqual("Age", result.Data[0].Key);
         Assert.AreEqual(30, result.Data[0].Value);
         Assert.AreEqual("Count", result.Data[1].Key);
@@ -111,7 +156,7 @@ public class CommonKeyValuePairListConverterTests
     }
 
     /// <summary>
-    /// Tests that deserialization handles null data correctly.
+    /// Verifies that ReadJson handles null data correctly.
     /// </summary>
     [TestMethod]
     public void ReadJson_WithNullData_ShouldReturnNull()
@@ -128,7 +173,7 @@ public class CommonKeyValuePairListConverterTests
     }
 
     /// <summary>
-    /// Tests that deserialization handles null values correctly.
+    /// Verifies that ReadJson handles null values correctly.
     /// </summary>
     [TestMethod]
     public void ReadJson_WithNullValue_ShouldDeserializeCorrectly()
@@ -142,7 +187,7 @@ public class CommonKeyValuePairListConverterTests
         // Assert
         Assert.IsNotNull(result);
         Assert.IsNotNull(result.Data);
-        Assert.AreEqual(2, result.Data.Count);
+        Assert.HasCount(2, result.Data);
         Assert.AreEqual("Key1", result.Data[0].Key);
         Assert.AreEqual("Value1", result.Data[0].Value);
         Assert.AreEqual("Key2", result.Data[1].Key);
@@ -150,7 +195,7 @@ public class CommonKeyValuePairListConverterTests
     }
 
     /// <summary>
-    /// Tests that deserialization handles special characters in keys.
+    /// Verifies that ReadJson handles special characters in keys.
     /// </summary>
     [TestMethod]
     public void ReadJson_WithSpecialCharactersInKeys_ShouldDeserializeCorrectly()
@@ -164,7 +209,7 @@ public class CommonKeyValuePairListConverterTests
         // Assert
         Assert.IsNotNull(result);
         Assert.IsNotNull(result.Data);
-        Assert.AreEqual(2, result.Data.Count);
+        Assert.HasCount(2, result.Data);
         Assert.AreEqual("Key-With-Dashes", result.Data[0].Key);
         Assert.AreEqual("Value1", result.Data[0].Value);
         Assert.AreEqual("Key_With_Underscores", result.Data[1].Key);
@@ -172,7 +217,7 @@ public class CommonKeyValuePairListConverterTests
     }
 
     /// <summary>
-    /// Tests that deserialization handles Unicode characters correctly.
+    /// Verifies that ReadJson handles Unicode characters correctly.
     /// </summary>
     [TestMethod]
     public void ReadJson_WithUnicodeCharacters_ShouldDeserializeCorrectly()
@@ -186,7 +231,7 @@ public class CommonKeyValuePairListConverterTests
         // Assert
         Assert.IsNotNull(result);
         Assert.IsNotNull(result.Data);
-        Assert.AreEqual(2, result.Data.Count);
+        Assert.HasCount(2, result.Data);
         Assert.AreEqual("名前", result.Data[0].Key);
         Assert.AreEqual("太郎", result.Data[0].Value);
         Assert.AreEqual("città", result.Data[1].Key);
@@ -194,7 +239,7 @@ public class CommonKeyValuePairListConverterTests
     }
 
     /// <summary>
-    /// Tests that deserialization correctly converts JSON object to list of pairs.
+    /// Verifies that ReadJson correctly converts JSON object to list of pairs.
     /// </summary>
     [TestMethod]
     public void ReadJson_WithValidJson_ShouldDeserializeCorrectly()
@@ -208,7 +253,7 @@ public class CommonKeyValuePairListConverterTests
         // Assert
         Assert.IsNotNull(result);
         Assert.IsNotNull(result.Data);
-        Assert.AreEqual(2, result.Data.Count);
+        Assert.HasCount(2, result.Data);
         Assert.AreEqual("Color", result.Data[0].Key);
         Assert.AreEqual("Red", result.Data[0].Value);
         Assert.AreEqual("Year", result.Data[1].Key);
@@ -216,7 +261,7 @@ public class CommonKeyValuePairListConverterTests
     }
 
     /// <summary>
-    /// Tests that serialization followed by deserialization produces equivalent data.
+    /// Verifies that serialization followed by deserialization produces equivalent data.
     /// </summary>
     [TestMethod]
     public void RoundTrip_SerializeAndDeserialize_ShouldPreserveData()
@@ -228,8 +273,8 @@ public class CommonKeyValuePairListConverterTests
             {
                 new CommonKeyValuePair<string, string>("Color", "Blue"),
                 new CommonKeyValuePair<string, string>("Size", "Large"),
-                new CommonKeyValuePair<string, string>("Year", "2025")
-            }
+                new CommonKeyValuePair<string, string>("Year", "2025"),
+            },
         };
 
         // Act
@@ -239,7 +284,7 @@ public class CommonKeyValuePairListConverterTests
         // Assert
         Assert.IsNotNull(deserialized);
         Assert.IsNotNull(deserialized.Data);
-        Assert.AreEqual(original.Data.Count, deserialized.Data.Count);
+        Assert.HasCount(original.Data.Count, deserialized.Data);
 
         for (int i = 0; i < original.Data.Count; i++)
         {
@@ -249,29 +294,29 @@ public class CommonKeyValuePairListConverterTests
     }
 
     /// <summary>
-    /// Tests round-trip with integer types.
+    /// Verifies round-trip with integer types.
     /// </summary>
     [TestMethod]
     public void RoundTrip_WithIntegerTypes_ShouldPreserveData()
     {
         // Arrange
-        var original = new TestObjectWithComplexValue
+        var original = new TestObjectWithIntValue
         {
             Data = new List<CommonKeyValuePair<string, int>>
             {
                 new CommonKeyValuePair<string, int>("Count", 42),
-                new CommonKeyValuePair<string, int>("Age", 25)
-            }
+                new CommonKeyValuePair<string, int>("Age", 25),
+            },
         };
 
         // Act
         string json = JsonConvert.SerializeObject(original);
-        var deserialized = JsonConvert.DeserializeObject<TestObjectWithComplexValue>(json);
+        var deserialized = JsonConvert.DeserializeObject<TestObjectWithIntValue>(json);
 
         // Assert
         Assert.IsNotNull(deserialized);
         Assert.IsNotNull(deserialized.Data);
-        Assert.AreEqual(original.Data.Count, deserialized.Data.Count);
+        Assert.HasCount(original.Data.Count, deserialized.Data);
 
         for (int i = 0; i < original.Data.Count; i++)
         {
@@ -281,7 +326,7 @@ public class CommonKeyValuePairListConverterTests
     }
 
     /// <summary>
-    /// Tests round-trip with null values.
+    /// Verifies round-trip with null values.
     /// </summary>
     [TestMethod]
     public void RoundTrip_WithNullValues_ShouldPreserveNulls()
@@ -292,8 +337,8 @@ public class CommonKeyValuePairListConverterTests
             Data = new List<CommonKeyValuePair<string, string>>
             {
                 new CommonKeyValuePair<string, string>("Key1", "Value1"),
-                new CommonKeyValuePair<string, string>("Key2", null!)
-            }
+                new CommonKeyValuePair<string, string>("Key2", null!),
+            },
         };
 
         // Act
@@ -303,7 +348,7 @@ public class CommonKeyValuePairListConverterTests
         // Assert
         Assert.IsNotNull(deserialized);
         Assert.IsNotNull(deserialized.Data);
-        Assert.AreEqual(original.Data.Count, deserialized.Data.Count);
+        Assert.HasCount(original.Data.Count, deserialized.Data);
         Assert.AreEqual("Key1", deserialized.Data[0].Key);
         Assert.AreEqual("Value1", deserialized.Data[0].Value);
         Assert.AreEqual("Key2", deserialized.Data[1].Key);
@@ -311,7 +356,57 @@ public class CommonKeyValuePairListConverterTests
     }
 
     /// <summary>
-    /// Tests that serialization handles duplicate keys by keeping the last occurrence.
+    /// Verifies that WriteJson works with boolean values.
+    /// </summary>
+    [TestMethod]
+    public void WriteJson_WithBooleanValues_ShouldSerializeCorrectly()
+    {
+        // Arrange
+        var obj = new TestObjectWithBoolValue
+        {
+            Data = new List<CommonKeyValuePair<string, bool>>
+            {
+                new CommonKeyValuePair<string, bool>("IsActive", true),
+                new CommonKeyValuePair<string, bool>("IsDeleted", false),
+            },
+        };
+
+        // Act
+        string json = JsonConvert.SerializeObject(obj);
+        dynamic result = JsonConvert.DeserializeObject(json) !;
+
+        // Assert
+        Assert.IsTrue((bool)result.data.IsActive);
+        Assert.IsFalse((bool)result.data.IsDeleted);
+    }
+
+    /// <summary>
+    /// Verifies that WriteJson works with decimal values.
+    /// </summary>
+    [TestMethod]
+    public void WriteJson_WithDecimalValues_ShouldSerializeCorrectly()
+    {
+        // Arrange
+        var obj = new TestObjectWithDecimalValue
+        {
+            Data = new List<CommonKeyValuePair<string, decimal>>
+            {
+                new CommonKeyValuePair<string, decimal>("Price", 19.99m),
+                new CommonKeyValuePair<string, decimal>("Tax", 1.50m),
+            },
+        };
+
+        // Act
+        string json = JsonConvert.SerializeObject(obj);
+        dynamic result = JsonConvert.DeserializeObject(json) !;
+
+        // Assert
+        Assert.AreEqual(19.99m, (decimal)result.data.Price);
+        Assert.AreEqual(1.50m, (decimal)result.data.Tax);
+    }
+
+    /// <summary>
+    /// Verifies that WriteJson handles duplicate keys by keeping the last occurrence.
     /// </summary>
     [TestMethod]
     public void WriteJson_WithDuplicateKeys_ShouldSerializeAllOccurrences()
@@ -322,13 +417,13 @@ public class CommonKeyValuePairListConverterTests
             Data = new List<CommonKeyValuePair<string, string>>
             {
                 new CommonKeyValuePair<string, string>("Key", "FirstValue"),
-                new CommonKeyValuePair<string, string>("Key", "SecondValue")
-            }
+                new CommonKeyValuePair<string, string>("Key", "SecondValue"),
+            },
         };
 
         // Act
         string json = JsonConvert.SerializeObject(obj);
-        dynamic result = JsonConvert.DeserializeObject(json)!;
+        dynamic result = JsonConvert.DeserializeObject(json) !;
 
         // Assert
         // JSON objects cannot have duplicate keys, so the last value wins
@@ -336,7 +431,7 @@ public class CommonKeyValuePairListConverterTests
     }
 
     /// <summary>
-    /// Tests that serialization handles empty list correctly.
+    /// Verifies that WriteJson handles empty list correctly.
     /// </summary>
     [TestMethod]
     public void WriteJson_WithEmptyList_ShouldSerializeAsEmptyObject()
@@ -344,12 +439,12 @@ public class CommonKeyValuePairListConverterTests
         // Arrange
         var obj = new TestObject
         {
-            Data = new List<CommonKeyValuePair<string, string>>()
+            Data = new List<CommonKeyValuePair<string, string>>(),
         };
 
         // Act
         string json = JsonConvert.SerializeObject(obj);
-        dynamic result = JsonConvert.DeserializeObject(json)!;
+        dynamic result = JsonConvert.DeserializeObject(json) !;
 
         // Assert
         Assert.IsNotNull(result.data);
@@ -357,7 +452,34 @@ public class CommonKeyValuePairListConverterTests
     }
 
     /// <summary>
-    /// Tests that serialization works with integer keys.
+    /// Verifies that WriteJson works with Guid keys.
+    /// </summary>
+    [TestMethod]
+    public void WriteJson_WithGuidKeys_ShouldSerializeCorrectly()
+    {
+        // Arrange
+        var guid1 = Guid.NewGuid();
+        var guid2 = Guid.NewGuid();
+        var obj = new TestObjectWithGuidKey
+        {
+            Data = new List<CommonKeyValuePair<Guid, string>>
+            {
+                new CommonKeyValuePair<Guid, string>(guid1, "Value1"),
+                new CommonKeyValuePair<Guid, string>(guid2, "Value2"),
+            },
+        };
+
+        // Act
+        string json = JsonConvert.SerializeObject(obj);
+        dynamic result = JsonConvert.DeserializeObject(json) !;
+
+        // Assert
+        Assert.AreEqual("Value1", (string)result.data[guid1.ToString()]);
+        Assert.AreEqual("Value2", (string)result.data[guid2.ToString()]);
+    }
+
+    /// <summary>
+    /// Verifies that WriteJson works with integer keys.
     /// </summary>
     [TestMethod]
     public void WriteJson_WithIntegerKeys_ShouldSerializeCorrectly()
@@ -368,13 +490,13 @@ public class CommonKeyValuePairListConverterTests
             Data = new List<CommonKeyValuePair<int, string>>
             {
                 new CommonKeyValuePair<int, string>(1, "First"),
-                new CommonKeyValuePair<int, string>(2, "Second")
-            }
+                new CommonKeyValuePair<int, string>(2, "Second"),
+            },
         };
 
         // Act
         string json = JsonConvert.SerializeObject(obj);
-        dynamic result = JsonConvert.DeserializeObject(json)!;
+        dynamic result = JsonConvert.DeserializeObject(json) !;
 
         // Assert
         Assert.AreEqual("First", (string)result.data["1"]);
@@ -382,24 +504,24 @@ public class CommonKeyValuePairListConverterTests
     }
 
     /// <summary>
-    /// Tests that serialization works with integer values.
+    /// Verifies that WriteJson works with integer values.
     /// </summary>
     [TestMethod]
     public void WriteJson_WithIntegerValues_ShouldSerializeCorrectly()
     {
         // Arrange
-        var obj = new TestObjectWithComplexValue
+        var obj = new TestObjectWithIntValue
         {
             Data = new List<CommonKeyValuePair<string, int>>
             {
                 new CommonKeyValuePair<string, int>("Age", 30),
-                new CommonKeyValuePair<string, int>("Count", 100)
-            }
+                new CommonKeyValuePair<string, int>("Count", 100),
+            },
         };
 
         // Act
         string json = JsonConvert.SerializeObject(obj);
-        dynamic result = JsonConvert.DeserializeObject(json)!;
+        dynamic result = JsonConvert.DeserializeObject(json) !;
 
         // Assert
         Assert.AreEqual(30, (int)result.data.Age);
@@ -407,7 +529,53 @@ public class CommonKeyValuePairListConverterTests
     }
 
     /// <summary>
-    /// Tests that serialization skips pairs with null keys.
+    /// Verifies that WriteJson handles keys with ToString returning empty string.
+    /// </summary>
+    [TestMethod]
+    public void WriteJson_WithKeyToStringReturningEmpty_ShouldSerializeWithEmptyKey()
+    {
+        // Arrange
+        var obj = new TestObjectWithCustomKey
+        {
+            Data = new List<CommonKeyValuePair<CustomKeyWithEmptyToString, string>>
+            {
+                new CommonKeyValuePair<CustomKeyWithEmptyToString, string>(new CustomKeyWithEmptyToString(), "Value1"),
+            },
+        };
+
+        // Act
+        string json = JsonConvert.SerializeObject(obj);
+        dynamic result = JsonConvert.DeserializeObject(json) !;
+
+        // Assert
+        Assert.AreEqual("Value1", (string)result.data[string.Empty]);
+    }
+
+    /// <summary>
+    /// Verifies that WriteJson handles keys with ToString returning null.
+    /// </summary>
+    [TestMethod]
+    public void WriteJson_WithKeyToStringReturningNull_ShouldSerializeWithEmptyKey()
+    {
+        // Arrange
+        var obj = new TestObjectWithCustomKeyNull
+        {
+            Data = new List<CommonKeyValuePair<CustomKeyWithNullToString, string>>
+            {
+                new CommonKeyValuePair<CustomKeyWithNullToString, string>(new CustomKeyWithNullToString(), "Value1"),
+            },
+        };
+
+        // Act
+        string json = JsonConvert.SerializeObject(obj);
+        dynamic result = JsonConvert.DeserializeObject(json) !;
+
+        // Assert
+        Assert.AreEqual("Value1", (string)result.data[string.Empty]);
+    }
+
+    /// <summary>
+    /// Verifies that WriteJson skips pairs with null keys.
     /// </summary>
     [TestMethod]
     public void WriteJson_WithNullKey_ShouldSkipPair()
@@ -418,13 +586,13 @@ public class CommonKeyValuePairListConverterTests
             Data = new List<CommonKeyValuePair<string, string>>
             {
                 new CommonKeyValuePair<string, string>("ValidKey", "ValidValue"),
-                new CommonKeyValuePair<string, string>(null!, "ValueWithNullKey")
-            }
+                new CommonKeyValuePair<string, string>(null!, "ValueWithNullKey"),
+            },
         };
 
         // Act
         string json = JsonConvert.SerializeObject(obj);
-        dynamic result = JsonConvert.DeserializeObject(json)!;
+        dynamic result = JsonConvert.DeserializeObject(json) !;
 
         // Assert
         Assert.AreEqual("ValidValue", (string)result.data.ValidKey);
@@ -432,7 +600,7 @@ public class CommonKeyValuePairListConverterTests
     }
 
     /// <summary>
-    /// Tests that serialization handles null list correctly.
+    /// Verifies that WriteJson handles null list correctly.
     /// </summary>
     [TestMethod]
     public void WriteJson_WithNullList_ShouldSerializeAsNull()
@@ -440,18 +608,18 @@ public class CommonKeyValuePairListConverterTests
         // Arrange
         var obj = new TestObject
         {
-            Data = null
+            Data = null,
         };
 
         // Act
         string json = JsonConvert.SerializeObject(obj);
 
         // Assert
-        Assert.IsTrue(json.Contains("\"data\":null"));
+        Assert.Contains("\"data\":null", json);
     }
 
     /// <summary>
-    /// Tests that serialization handles pairs with null values correctly.
+    /// Verifies that WriteJson handles pairs with null values correctly.
     /// </summary>
     [TestMethod]
     public void WriteJson_WithNullValue_ShouldSerializeNullValue()
@@ -462,13 +630,13 @@ public class CommonKeyValuePairListConverterTests
             Data = new List<CommonKeyValuePair<string, string>>
             {
                 new CommonKeyValuePair<string, string>("Key1", "Value1"),
-                new CommonKeyValuePair<string, string>("Key2", null!)
-            }
+                new CommonKeyValuePair<string, string>("Key2", null!),
+            },
         };
 
         // Act
         string json = JsonConvert.SerializeObject(obj);
-        dynamic result = JsonConvert.DeserializeObject(json)!;
+        dynamic result = JsonConvert.DeserializeObject(json) !;
 
         // Assert
         Assert.AreEqual("Value1", (string)result.data.Key1);
@@ -476,7 +644,7 @@ public class CommonKeyValuePairListConverterTests
     }
 
     /// <summary>
-    /// Tests that serialization produces the correct JSON structure with string key-value pairs.
+    /// Verifies that WriteJson produces the correct JSON structure with string key-value pairs.
     /// </summary>
     [TestMethod]
     public void WriteJson_WithStringPairs_ShouldSerializeCorrectly()
@@ -493,7 +661,7 @@ public class CommonKeyValuePairListConverterTests
 
         // Act
         string json = JsonConvert.SerializeObject(obj);
-        dynamic result = JsonConvert.DeserializeObject(json)!;
+        dynamic result = JsonConvert.DeserializeObject(json) !;
 
         // Assert
         Assert.IsNotNull(result);
@@ -504,6 +672,75 @@ public class CommonKeyValuePairListConverterTests
     #endregion Public Methods
 
     #region Private Classes
+
+    /// <summary>
+    /// Verifies that WriteJson correctly serializes when pair Value property is explicitly null.
+    /// </summary>
+    [TestMethod]
+    public void WriteJson_WithPairValueNull_ShouldSerializeNullCorrectly()
+    {
+        // Arrange
+        var obj = new TestObject
+        {
+            Data = new List<CommonKeyValuePair<string, string>>
+            {
+                new CommonKeyValuePair<string, string>("Key1", "Value1"),
+                new CommonKeyValuePair<string, string>("Key2", null!),
+                new CommonKeyValuePair<string, string>("Key3", "Value3"),
+                null!,
+            },
+        };
+
+        // Act
+        string json = JsonConvert.SerializeObject(obj);
+        var deserialized = JsonConvert.DeserializeObject<TestObject>(json);
+
+        // Assert
+        Assert.IsNotNull(deserialized);
+        Assert.IsNotNull(deserialized.Data);
+        Assert.HasCount(3, deserialized.Data);
+        Assert.AreEqual("Key1", deserialized.Data[0].Key);
+        Assert.AreEqual("Value1", deserialized.Data[0].Value);
+        Assert.AreEqual("Key2", deserialized.Data[1].Key);
+        Assert.IsNull(deserialized.Data[1].Value);
+        Assert.AreEqual("Key3", deserialized.Data[2].Key);
+        Assert.AreEqual("Value3", deserialized.Data[2].Value);
+
+        // Verify the JSON contains the null value
+        Assert.Contains("\"Key2\":null", json);
+    }
+
+    /// <summary>
+    /// Custom key class that returns empty string from ToString.
+    /// </summary>
+    private class CustomKeyWithEmptyToString
+    {
+        #region Public Methods
+
+        /// <summary>
+        /// Returns an empty string.
+        /// </summary>
+        /// <returns>Empty string.</returns>
+        public override string ToString() => string.Empty;
+
+        #endregion Public Methods
+    }
+
+    /// <summary>
+    /// Custom key class that returns null from ToString.
+    /// </summary>
+    private class CustomKeyWithNullToString
+    {
+        #region Public Methods
+
+        /// <summary>
+        /// Returns null.
+        /// </summary>
+        /// <returns>Null value.</returns>
+        public override string? ToString() => null;
+
+        #endregion Public Methods
+    }
 
     /// <summary>
     /// Test class that uses the converter for serialization/deserialization.
@@ -523,18 +760,86 @@ public class CommonKeyValuePairListConverterTests
     }
 
     /// <summary>
-    /// Test class that uses the converter with complex value types.
+    /// Test class that uses the converter with boolean values.
     /// </summary>
-    private class TestObjectWithComplexValue
+    private class TestObjectWithBoolValue
     {
         #region Public Properties
 
         /// <summary>
-        /// Gets or sets the data property with string key and integer value.
+        /// Gets or sets the data property with string key and boolean value.
         /// </summary>
         [JsonProperty("data")]
-        [JsonConverter(typeof(CommonKeyValuePairListConverter<string, int>))]
-        public IList<CommonKeyValuePair<string, int>>? Data { get; set; }
+        [JsonConverter(typeof(CommonKeyValuePairListConverter<string, bool>))]
+        public IList<CommonKeyValuePair<string, bool>>? Data { get; set; }
+
+        #endregion Public Properties
+    }
+
+    /// <summary>
+    /// Test class that uses the converter with custom key type returning empty ToString.
+    /// </summary>
+    private class TestObjectWithCustomKey
+    {
+        #region Public Properties
+
+        /// <summary>
+        /// Gets or sets the data property with custom key and string value.
+        /// </summary>
+        [JsonProperty("data")]
+        [JsonConverter(typeof(CommonKeyValuePairListConverter<CustomKeyWithEmptyToString, string>))]
+        public IList<CommonKeyValuePair<CustomKeyWithEmptyToString, string>>? Data { get; set; }
+
+        #endregion Public Properties
+    }
+
+    /// <summary>
+    /// Test class that uses the converter with custom key type returning null ToString.
+    /// </summary>
+    private class TestObjectWithCustomKeyNull
+    {
+        #region Public Properties
+
+        /// <summary>
+        /// Gets or sets the data property with custom key and string value.
+        /// </summary>
+        [JsonProperty("data")]
+        [JsonConverter(typeof(CommonKeyValuePairListConverter<CustomKeyWithNullToString, string>))]
+        public IList<CommonKeyValuePair<CustomKeyWithNullToString, string>>? Data { get; set; }
+
+        #endregion Public Properties
+    }
+
+    /// <summary>
+    /// Test class that uses the converter with decimal values.
+    /// </summary>
+    private class TestObjectWithDecimalValue
+    {
+        #region Public Properties
+
+        /// <summary>
+        /// Gets or sets the data property with string key and decimal value.
+        /// </summary>
+        [JsonProperty("data")]
+        [JsonConverter(typeof(CommonKeyValuePairListConverter<string, decimal>))]
+        public IList<CommonKeyValuePair<string, decimal>>? Data { get; set; }
+
+        #endregion Public Properties
+    }
+
+    /// <summary>
+    /// Test class that uses the converter with Guid keys.
+    /// </summary>
+    private class TestObjectWithGuidKey
+    {
+        #region Public Properties
+
+        /// <summary>
+        /// Gets or sets the data property with Guid key and string value.
+        /// </summary>
+        [JsonProperty("data")]
+        [JsonConverter(typeof(CommonKeyValuePairListConverter<Guid, string>))]
+        public IList<CommonKeyValuePair<Guid, string>>? Data { get; set; }
 
         #endregion Public Properties
     }
@@ -556,5 +861,21 @@ public class CommonKeyValuePairListConverterTests
         #endregion Public Properties
     }
 
+    /// <summary>
+    /// Test class that uses the converter with integer values.
+    /// </summary>
+    private class TestObjectWithIntValue
+    {
+        #region Public Properties
+
+        /// <summary>
+        /// Gets or sets the data property with string key and integer value.
+        /// </summary>
+        [JsonProperty("data")]
+        [JsonConverter(typeof(CommonKeyValuePairListConverter<string, int>))]
+        public IList<CommonKeyValuePair<string, int>>? Data { get; set; }
+
+        #endregion Public Properties
+    }
     #endregion Private Classes
 }

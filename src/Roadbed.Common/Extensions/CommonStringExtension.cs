@@ -4,7 +4,7 @@
 
 namespace Roadbed;
 
-using Roadbed.Common.Services;
+using Roadbed.Common;
 
 /// <summary>
 /// Extensions for common String operations.

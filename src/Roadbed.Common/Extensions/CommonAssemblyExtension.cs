@@ -21,31 +21,31 @@ public static class CommonAssemblyExtension
     /// <returns>Decision on whether or not the assembly is loaded.</returns>
     public static bool IsAssemblyLoaded(string assemblyName)
     {
-        bool result = false;
+        bool isAssemblyLoaded = false;
 
         if (!string.IsNullOrEmpty(assemblyName))
         {
-            // Get all assemblies currently loaded in the current AppDomain
             Assembly[] loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
 
-            if (loadedAssemblies.Length > 0)
+            foreach (Assembly assembly in loadedAssemblies)
             {
-                foreach (Assembly assembly in loadedAssemblies)
-                {
-                    var name = assembly.GetName();
-                    string? nameStr = name?.Name;
+                var name = assembly.GetName();
+                string? nameStr = name?.Name;
 
-                    if (!string.IsNullOrEmpty(nameStr) &&
-                        nameStr.Equals(assemblyName, StringComparison.OrdinalIgnoreCase))
-                    {
-                        result = true;
-                        break;
-                    }
+                if (!string.IsNullOrEmpty(nameStr) &&
+                    nameStr.Equals(assemblyName, StringComparison.OrdinalIgnoreCase))
+                {
+                    isAssemblyLoaded = true;
+                    break;
+                    /*
+                    Visual Studio doesn't support ignoring a single line of code from code coverage.
+                    The "break;" causes the 'if' statements closing bracket (}) not to be covered.
+                     */
                 }
             }
         }
 
-        return result;
+        return isAssemblyLoaded;
     }
 
     /// <summary>

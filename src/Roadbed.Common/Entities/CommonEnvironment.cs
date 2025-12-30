@@ -2,10 +2,10 @@
  * The namespace Roadbed.Common.Entities was removed on purpose and replaced with Roadbed.Common so that no additional using statements are required.
  */
 
-namespace Roadbed.Common.Services;
+namespace Roadbed.Common;
 
 /// <summary>
-/// Service for CommonEnvironment related operations.
+/// Entity for CommonEnvironment related operations.
 /// </summary>
 public static class CommonEnvironment
 {

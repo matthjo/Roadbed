@@ -92,17 +92,9 @@ public abstract class BaseEntityWithCrud<TEntityType, TDtoType, TIdType>
 
         builder.Append($"Create operation called in {typeof(TEntityType).ToString()}. ");
 
-        if (object.Equals(dto, default(TDtoType)))
+        if (!object.Equals(dto, default(TDtoType)))
         {
-            builder.Append($"DTO is null.");
-        }
-        else
-        {
-            if (object.Equals(dto.Id, default(TIdType)))
-            {
-                builder.Append($"DTO ID is null.");
-            }
-            else
+            if (!object.Equals(dto.Id, default(TIdType)))
             {
                 builder.Append($"DTO ID is {dto.Id!.ToString()}.");
             }
@@ -110,12 +102,6 @@ public abstract class BaseEntityWithCrud<TEntityType, TDtoType, TIdType>
 
         // Log message
         this.LogTrace(builder.ToString());
-
-        // Null Check
-        if (object.Equals(dto, default(TDtoType)))
-        {
-            return default;
-        }
 
         return await this.Repository.CreateAsync(dto, cancellationToken);
     }
@@ -197,17 +183,9 @@ public abstract class BaseEntityWithCrud<TEntityType, TDtoType, TIdType>
 
         builder.Append($"Update operation called in {typeof(TEntityType).ToString()}.");
 
-        if (object.Equals(dto, default(TDtoType)))
+        if (!object.Equals(dto, default(TDtoType)))
         {
-            builder.Append($"DTO is null.");
-        }
-        else
-        {
-            if (object.Equals(dto.Id, default(TIdType)))
-            {
-                builder.Append($"DTO ID is null.");
-            }
-            else
+            if (!object.Equals(dto.Id, default(TIdType)))
             {
                 builder.Append($"DTO ID is {dto.Id!.ToString()}.");
             }
