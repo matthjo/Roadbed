@@ -1,0 +1,183 @@
+﻿/*
+ * The namespace Roadbed.Data.Entities was removed on purpose and replaced with Roadbed.Data so that no additional using statements are required.
+ */
+
+namespace Roadbed.Data;
+
+using System.Data.Common;
+using System.Diagnostics.CodeAnalysis;
+
+/// <summary>
+/// Entity for data connection string.
+/// </summary>
+public class DataConnecionString
+{
+    /// <summary>
+    /// Container for the original connection string.
+    /// </summary>
+    private readonly string originalConnectionString = string.Empty;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DataConnecionString"/> class.
+    /// </summary>
+    /// <param name="connectionStringType">Type of connection string.</param>
+    public DataConnecionString(DataConnectionStringType connectionStringType)
+    {
+        this.ConnectionStringType = connectionStringType;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DataConnecionString"/> class.
+    /// </summary>
+    /// <param name="connectionStringType">Type of connection string.</param>
+    /// <param name="connectionString">Custom connection string.</param>
+    public DataConnecionString(
+        DataConnectionStringType connectionStringType,
+        string connectionString)
+    {
+        this.ConnectionStringType = connectionStringType;
+        this.originalConnectionString = connectionString;
+    }
+
+    /// <summary>
+    /// Gets the connection string.
+    /// </summary>
+    public string ConnectionString
+    {
+        get
+        {
+            return this.CreateConnectionString();
+        }
+    }
+
+    /// <summary>
+    /// Gets a <see cref="DbConnectionStringBuilder"/> for the connection string.
+    /// </summary>
+    public DbConnectionStringBuilder ConnectionStringBuilder
+    {
+        get
+        {
+            return new DbConnectionStringBuilder()
+            {
+                ConnectionString = this.ConnectionString,
+            };
+        }
+    }
+
+    /// <summary>
+    /// Gets the Type of connection string.
+    /// </summary>
+    public DataConnectionStringType ConnectionStringType
+    {
+        get;
+        internal set;
+    }
+
+    /// <summary>
+    /// Gets or sets the Database Source for the connection string.
+    /// </summary>
+    public string? DatabaseSource
+    {
+        get;
+        set;
+    }
+
+    /// <summary>
+    /// Gets or sets the Password for the connection string.
+    /// </summary>
+    public string? Password
+    {
+        get;
+        set;
+    }
+
+    /// <summary>
+    /// Gets or sets the Server Name for the connection string.
+    /// </summary>
+    public string? ServerName
+    {
+        get;
+        set;
+    }
+
+    /// <summary>
+    /// Gets or sets the Timeout for the connection string.
+    /// </summary>
+    /// <remarks>
+    /// Timeout is in seconds.
+    /// </remarks>
+    public int TimeoutInSeconds { get; set; } = 20;
+
+    /// <summary>
+    /// Gets or sets the Username for the connection string.
+    /// </summary>
+    public string? Username
+    {
+        get;
+        set;
+    }
+
+    /// <summary>
+    /// Creates the connection string based on the property values.
+    /// </summary>
+    /// <returns>Connection string used to access a data source.</returns>
+    private string CreateConnectionString()
+    {
+        string result = string.Empty;
+
+        if (string.IsNullOrEmpty(this.originalConnectionString))
+        {
+            if (this.ConnectionStringType == DataConnectionStringType.Sqlite)
+            {
+                result = this.CreateConnectionStringForSqlite();
+            }
+            else if (this.ConnectionStringType == DataConnectionStringType.SqliteInMemory)
+            {
+                result = this.CreateConnectionStringForSqliteInMemory();
+            }
+        }
+        else
+        {
+            result = this.originalConnectionString;
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Creates a connection string for SQLite database.
+    /// </summary>
+    /// <returns>Connection string used to access a database.</returns>
+    private string CreateConnectionStringForSqlite()
+    {
+        string template = """
+            Data Source={0};
+            Version=3;
+            Compress=True;
+            BinaryGUID=false;
+            UTF8Encoding=True;
+            Foreign Keys=true;
+            """;
+
+        return string.Format(template, this.DatabaseSource);
+    }
+
+    /// <summary>
+    /// Creates a connection string for an in-memmory SQLite database.
+    /// </summary>
+    /// <returns>Connection string used to access a database.</returns>
+    [SuppressMessage(
+        "Minor Code Smell",
+        "S2325:Methods and properties that don't access instance data should be static",
+        Justification = "Keeping it non-static to match similar methods.")]
+    private string CreateConnectionStringForSqliteInMemory()
+    {
+        string template = """
+            Data Source=InMemorySample;
+            Mode=Memory;
+            Cache=Shared;
+            """;
+
+        return template;
+    }
+}

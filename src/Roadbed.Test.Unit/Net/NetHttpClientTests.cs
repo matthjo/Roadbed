@@ -29,7 +29,7 @@ public class NetHttpClientTests
         // Act (When)
         try
         {
-            var service = new NetHttpClientService(nullFactory!);
+            var service = new NetHttpClient(nullFactory!);
         }
         catch (ArgumentNullException)
         {
@@ -55,7 +55,7 @@ public class NetHttpClientTests
         var factory = serviceProvider.GetRequiredService<IHttpClientFactory>();
 
         // Act (When)
-        var service = new NetHttpClientService(factory);
+        var service = new NetHttpClient(factory);
 
         // Assert (Then)
         Assert.IsNotNull(
@@ -75,7 +75,7 @@ public class NetHttpClientTests
         services.AddHttpClient();
         var serviceProvider = services.BuildServiceProvider();
         var factory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-        var service = new NetHttpClientService(factory);
+        var service = new NetHttpClient(factory);
         var auth = new NetHttpAuthentication
         {
             AuthenticationType = NetHttpAuthenticationType.Basic,
@@ -112,7 +112,7 @@ public class NetHttpClientTests
         services.AddHttpClient();
         var serviceProvider = services.BuildServiceProvider();
         var factory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-        var service = new NetHttpClientService(factory);
+        var service = new NetHttpClient(factory);
         var auth = new NetHttpAuthentication
         {
             AuthenticationType = NetHttpAuthenticationType.Bearer,
@@ -150,7 +150,7 @@ public class NetHttpClientTests
         services.AddHttpClient("CompressedClient");
         var serviceProvider = services.BuildServiceProvider();
         var factory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-        var service = new NetHttpClientService(factory);
+        var service = new NetHttpClient(factory);
         var request = new NetHttpRequest
         {
             HttpEndPoint = new Uri("http://invalid-test.com"),
@@ -183,7 +183,7 @@ public class NetHttpClientTests
         services.AddHttpClient("CompressedClient");
         var serviceProvider = services.BuildServiceProvider();
         var factory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-        var service = new NetHttpClientService(factory);
+        var service = new NetHttpClient(factory);
         var request = new NetHttpRequest
         {
             HttpEndPoint = new Uri("http://invalid-test.com"),
@@ -215,7 +215,7 @@ public class NetHttpClientTests
         services.AddHttpClient();
         var serviceProvider = services.BuildServiceProvider();
         var factory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-        var service = new NetHttpClientService(factory);
+        var service = new NetHttpClient(factory);
         var headers = new System.Collections.Generic.List<NetHttpHeader>
         {
             new NetHttpHeader("X-Custom-Header", "custom-value"),
@@ -252,7 +252,7 @@ public class NetHttpClientTests
         services.AddHttpClient();
         var serviceProvider = services.BuildServiceProvider();
         var factory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-        var service = new NetHttpClientService(factory);
+        var service = new NetHttpClient(factory);
         var request = new NetHttpRequest
         {
             HttpEndPoint = new Uri("http://invalid-test.com"),
@@ -283,7 +283,7 @@ public class NetHttpClientTests
         services.AddHttpClient();
         var serviceProvider = services.BuildServiceProvider();
         var factory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-        var service = new NetHttpClientService(factory);
+        var service = new NetHttpClient(factory);
         var headers = new System.Collections.Generic.List<NetHttpHeader>
         {
             new NetHttpHeader(string.Empty, "value"),
@@ -320,7 +320,7 @@ public class NetHttpClientTests
         services.AddHttpClient();
         var serviceProvider = services.BuildServiceProvider();
         var factory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-        var service = new NetHttpClientService(factory);
+        var service = new NetHttpClient(factory);
         var request = new NetHttpRequest
         {
             HttpEndPoint = new Uri("http://invalid-test.com"),
@@ -351,7 +351,7 @@ public class NetHttpClientTests
         services.AddHttpClient();
         var serviceProvider = services.BuildServiceProvider();
         var factory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-        var service = new NetHttpClientService(factory);
+        var service = new NetHttpClient(factory);
         var request = new NetHttpRequest
         {
             HttpEndPoint = null,
@@ -388,7 +388,7 @@ public class NetHttpClientTests
         services.AddHttpClient();
         var serviceProvider = services.BuildServiceProvider();
         var factory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-        var service = new NetHttpClientService(factory);
+        var service = new NetHttpClient(factory);
         var request = new NetHttpRequest
         {
             HttpEndPoint = new Uri("http://invalid-test.com"),
@@ -423,7 +423,7 @@ public class NetHttpClientTests
         services.AddHttpClient();
         var serviceProvider = services.BuildServiceProvider();
         var factory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-        var service = new NetHttpClientService(factory);
+        var service = new NetHttpClient(factory);
         var request = new NetHttpRequest
         {
             HttpEndPoint = new Uri("http://invalid-domain-that-does-not-exist-12345.com"),
@@ -462,7 +462,7 @@ public class NetHttpClientTests
         services.AddHttpClient();
         var serviceProvider = services.BuildServiceProvider();
         var factory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-        var service = new NetHttpClientService(factory);
+        var service = new NetHttpClient(factory);
         NetHttpRequest? nullRequest = null;
         CancellationToken cancelToken = CancellationToken.None;
         bool exceptionThrown = false;
@@ -495,7 +495,7 @@ public class NetHttpClientTests
         services.AddHttpClient();
         var serviceProvider = services.BuildServiceProvider();
         var factory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-        var service = new NetHttpClientService(factory);
+        var service = new NetHttpClient(factory);
         var content = new StringContent("{\"test\": \"data\"}");
         var request = new NetHttpRequest
         {
@@ -528,7 +528,7 @@ public class NetHttpClientTests
         services.AddHttpClient();
         var serviceProvider = services.BuildServiceProvider();
         var factory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-        var service = new NetHttpClientService(factory);
+        var service = new NetHttpClient(factory);
         var auth = new NetHttpAuthentication
         {
             AuthenticationType = NetHttpAuthenticationType.Unknown,
@@ -565,7 +565,7 @@ public class NetHttpClientTests
         services.AddHttpClient();
         var serviceProvider = services.BuildServiceProvider();
         var factory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-        var service = new NetHttpClientService(factory);
+        var service = new NetHttpClient(factory);
         var request = new NetHttpRequest
         {
             HttpEndPoint = new Uri("http://invalid-test.com"),

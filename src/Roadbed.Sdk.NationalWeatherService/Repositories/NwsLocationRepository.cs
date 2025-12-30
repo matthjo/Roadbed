@@ -51,7 +51,7 @@ internal class NwsLocationRepository
 
         // Make HTTP request
         NetHttpResponse<string> response =
-            await NetHttpClientService.MakeRequestAsync<string>(apiRequest, cancellationToken);
+            await NetHttpClient.MakeRequestAsync<string>(apiRequest, cancellationToken);
 
         // Verify Response
         if (response.IsSuccessStatusCode)

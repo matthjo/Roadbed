@@ -60,7 +60,7 @@ public class SimpleNetServiceTests
 
         // Make HTTP request
         NetHttpResponse<string> response =
-            await NetHttpClientService.MakeRequestAsync<string>(request, this.TestContext.CancellationToken);
+            await NetHttpClient.MakeRequestAsync<string>(request, this.TestContext.CancellationToken);
 
         // Assert (Then)
         Assert.IsTrue(

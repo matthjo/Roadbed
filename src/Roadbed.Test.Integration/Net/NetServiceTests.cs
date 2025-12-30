@@ -171,7 +171,7 @@ public class NetServiceTests
             // Get the token to pass to async methods
             CancellationToken token = cts.Token;
 
-            var netService = await NetHttpClientService.MakeRequestAsync<string>(request, token);
+            var netService = await NetHttpClient.MakeRequestAsync<string>(request, token);
 
             actualResponse = netService.Data;
         }

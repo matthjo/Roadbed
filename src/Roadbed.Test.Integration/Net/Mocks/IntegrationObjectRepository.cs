@@ -43,7 +43,7 @@ internal class IntegrationObjectRepository
 
         // Make HTTP request
         NetHttpResponse<string> response =
-            await NetHttpClientService.MakeRequestAsync<string>(request, cancellationToken);
+            await NetHttpClient.MakeRequestAsync<string>(request, cancellationToken);
 
         // Verify Response
         if (response.IsSuccessStatusCode)
@@ -71,7 +71,7 @@ internal class IntegrationObjectRepository
 
         // Make HTTP request
         NetHttpResponse<string> response =
-            await NetHttpClientService.MakeRequestAsync<string>(request, cancellationToken);
+            await NetHttpClient.MakeRequestAsync<string>(request, cancellationToken);
 
         // Verify Response
         return response.IsSuccessStatusCode;
@@ -88,7 +88,7 @@ internal class IntegrationObjectRepository
 
         // Make HTTP request
         NetHttpResponse<string> response =
-            await NetHttpClientService.MakeRequestAsync<string>(request, cancellationToken);
+            await NetHttpClient.MakeRequestAsync<string>(request, cancellationToken);
 
         // Verify Response
         if (response.IsSuccessStatusCode)
@@ -123,7 +123,7 @@ internal class IntegrationObjectRepository
 
         // Make HTTP request
         NetHttpResponse<string> response =
-            await NetHttpClientService.MakeRequestAsync<string>(request, cancellationToken);
+            await NetHttpClient.MakeRequestAsync<string>(request, cancellationToken);
 
         // Verify Response
         return response.IsSuccessStatusCode;
@@ -146,7 +146,7 @@ internal class IntegrationObjectRepository
 
         // Make HTTP request
         NetHttpResponse<string> response =
-            await NetHttpClientService.MakeRequestAsync<string>(request, cancellationToken);
+            await NetHttpClient.MakeRequestAsync<string>(request, cancellationToken);
 
         // Verify Response
         if (response.IsSuccessStatusCode)

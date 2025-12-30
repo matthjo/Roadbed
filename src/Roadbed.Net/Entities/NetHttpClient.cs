@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 /// <summary>
 /// Service for managing HttpClient operations using IHttpClientFactory.
 /// </summary>
-public class NetHttpClientService
+public class NetHttpClient
 {
     #region Private Fields
 
@@ -29,11 +29,11 @@ public class NetHttpClientService
     #region Public Constructors
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="NetHttpClientService"/> class.
+    /// Initializes a new instance of the <see cref="NetHttpClient"/> class.
     /// </summary>
     /// <param name="httpClientFactory">Factory for creating HttpClient instances.</param>
     /// <exception cref="ArgumentNullException">httpClientFactory is null.</exception>
-    public NetHttpClientService(IHttpClientFactory httpClientFactory)
+    public NetHttpClient(IHttpClientFactory httpClientFactory)
     {
         ArgumentNullException.ThrowIfNull(httpClientFactory);
 
@@ -61,7 +61,7 @@ public class NetHttpClientService
         ArgumentNullException.ThrowIfNull(factory);
 
         // Create instance
-        NetHttpClientService service = new NetHttpClientService(factory);
+        NetHttpClient service = new NetHttpClient(factory);
 
         // Return the result
         return await service.MakeHttpRequestAsync<T>(request, cancelToken);
