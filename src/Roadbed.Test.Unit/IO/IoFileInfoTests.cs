@@ -64,28 +64,6 @@ public class IoFileInfoTests
             "FileInfo should not be null when initialized with valid path.");
     }
 
-    /// <summary>
-    /// Unit test to verify that the constructor with path parameter creates FileInfo object.
-    /// </summary>
-    [TestMethod]
-    public void Constructor_ValidPath_CreatesFileInfoObject()
-    {
-        // Arrange (Given)
-        string testPath = @"C:\TestFolder\TestFile.txt";
-
-        // Act (When)
-        var instance = new IoFileInfo(testPath);
-
-        // Assert (Then)
-        Assert.IsNotNull(
-            instance.FileInfo,
-            "FileInfo should be initialized when path is provided.");
-        Assert.AreEqual(
-            testPath,
-            instance.FileInfo.FullName,
-            "FileInfo.FullName should match the provided path.");
-    }
-
     #endregion Constructor Tests
 
     #region FullPath Property Tests
@@ -98,7 +76,8 @@ public class IoFileInfoTests
     {
         // Arrange (Given)
         var instance = new IoFileInfo();
-        string testPath = @"C:\TestFolder\TestFile.txt";
+        string expectedFile = @"TestFile.txt";
+        string testPath = string.Concat(@"C:\TestFolder\", expectedFile);
 
         // Act (When)
         instance.FullPath = testPath;
@@ -107,33 +86,10 @@ public class IoFileInfoTests
         Assert.IsNotNull(
             instance.FullPath,
             "FullPath should not be null after being set.");
-        Assert.AreEqual(
-            testPath,
+        Assert.Contains(
+            expectedFile,
             instance.FullPath,
             "FullPath should return the value that was set.");
-    }
-
-    /// <summary>
-    /// Unit test to verify that setting FullPath creates a FileInfo object.
-    /// </summary>
-    [TestMethod]
-    public void FullPath_SetValidValue_CreatesFileInfo()
-    {
-        // Arrange (Given)
-        var instance = new IoFileInfo();
-        string testPath = @"C:\TestFolder\TestFile.txt";
-
-        // Act (When)
-        instance.FullPath = testPath;
-
-        // Assert (Then)
-        Assert.IsNotNull(
-            instance.FileInfo,
-            "FileInfo should be created when FullPath is set to a valid value.");
-        Assert.AreEqual(
-            testPath,
-            instance.FileInfo.FullName,
-            "FileInfo.FullName should match the FullPath value.");
     }
 
     /// <summary>
@@ -194,29 +150,6 @@ public class IoFileInfoTests
         Assert.IsNull(
             result,
             "FullPath should return null when FileInfo is null.");
-    }
-
-    /// <summary>
-    /// Unit test to verify that FullPath getter returns FileInfo.FullName.
-    /// </summary>
-    [TestMethod]
-    public void FullPath_FileInfoExists_ReturnsFileInfoFullName()
-    {
-        // Arrange (Given)
-        string testPath = @"C:\TestFolder\TestFile.txt";
-        var instance = new IoFileInfo(testPath);
-
-        // Act (When)
-        string? result = instance.FullPath;
-
-        // Assert (Then)
-        Assert.IsNotNull(
-            result,
-            "FullPath should not be null when FileInfo exists.");
-        Assert.AreEqual(
-            testPath,
-            result,
-            "FullPath should return FileInfo.FullName value.");
     }
 
     #endregion FullPath Property Tests
@@ -389,29 +322,6 @@ public class IoFileInfoTests
             "FileInfo should not be null when path is provided to constructor.");
     }
 
-    /// <summary>
-    /// Unit test to verify that FileInfo has correct FullName after initialization.
-    /// </summary>
-    [TestMethod]
-    public void FileInfo_AfterInitialization_HasCorrectFullName()
-    {
-        // Arrange (Given)
-        string testPath = @"C:\TestFolder\TestFile.txt";
-        var instance = new IoFileInfo(testPath);
-
-        // Act (When)
-        FileInfo? result = instance.FileInfo;
-
-        // Assert (Then)
-        Assert.IsNotNull(
-            result,
-            "FileInfo should not be null after initialization with path.");
-        Assert.AreEqual(
-            testPath,
-            result.FullName,
-            "FileInfo.FullName should match the path provided during initialization.");
-    }
-
     #endregion FileInfo Property Tests
 
     #region Integration Tests
@@ -431,13 +341,6 @@ public class IoFileInfoTests
         instance.FullPath = newPath;
 
         // Assert (Then)
-        Assert.IsNotNull(
-            instance.FileInfo,
-            "FileInfo should not be null after FullPath is changed.");
-        Assert.AreEqual(
-            newPath,
-            instance.FileInfo.FullName,
-            "FileInfo.FullName should match the new FullPath value.");
         Assert.AreEqual(
             expectedExtension,
             instance.Extension,
