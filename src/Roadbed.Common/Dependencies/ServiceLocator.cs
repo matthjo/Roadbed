@@ -58,11 +58,8 @@ public static class ServiceLocator
 
         lock (LockObject)
         {
-            if (!isInitialized)
-            {
-                serviceProviderCollection = serviceProvider;
-                isInitialized = true;
-            }
+            serviceProviderCollection = serviceProvider;
+            isInitialized = true;
         }
     }
 
