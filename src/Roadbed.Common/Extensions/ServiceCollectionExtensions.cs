@@ -14,6 +14,17 @@ using Microsoft.Extensions.DependencyInjection;
 /// </summary>
 public static class ServiceCollectionExtensions
 {
+    #region Private Fields
+
+    /// <summary>
+    /// Type of interface used to install modules.
+    /// </summary>
+    private static readonly Type InterfaceType = typeof(IServiceCollectionInstaller);
+
+    #endregion Private Fields
+
+    #region Public Methods
+
     /// <summary>
     /// Installs services from the specified assembly that implement <see cref="IServiceCollectionInstaller"/>.
     /// </summary>
@@ -26,20 +37,7 @@ public static class ServiceCollectionExtensions
     /// </remarks>
     public static void InstallFromAssembly<T>(this IServiceCollection services, IConfiguration configuration)
     {
-        // Get all public classes that implement from IInstaller
-        var installerItems = typeof(T).Assembly
-                                    .GetExportedTypes()
-                                        .Where(x => typeof(IServiceCollectionInstaller).IsAssignableFrom(x) &&
-                                                    x is { IsAbstract: false, IsInterface: false })
-                                        .Select(Activator.CreateInstance)
-                                        .Cast<IServiceCollectionInstaller>()
-                                        .ToList();
-
-        // Configure ServiceCollection for all founded classes
-        foreach (var installer in installerItems)
-        {
-            installer.ConfigureServices(services, configuration);
-        }
+        InvokeInstallers(typeof(T).Assembly, services, configuration);
     }
 
     /// <summary>
@@ -53,52 +51,119 @@ public static class ServiceCollectionExtensions
     /// </remarks>
     public static void InstallModulesInAppDomain(this IServiceCollection services, IConfiguration configuration)
     {
-        var implementations = GetImplementations<IServiceCollectionInstaller>();
+        var visited = new HashSet<string>();
+        var queue = new Queue<Assembly>();
 
-        foreach (var type in implementations)
+        // Start with all currently loaded assemblies in the AppDomain
+        var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies()
+            .Where(a => !string.IsNullOrEmpty(a.FullName) &&
+                        !a.FullName.StartsWith("System.") &&
+                        !a.FullName.StartsWith("Microsoft."));
+
+        foreach (var assembly in loadedAssemblies)
         {
-            if (Activator.CreateInstance(type) is IServiceCollectionInstaller instance)
+            queue.Enqueue(assembly);
+        }
+
+        // Also include the entry assembly if it exists
+        var rootAssembly = Assembly.GetEntryAssembly();
+        if (rootAssembly != null)
+        {
+            queue.Enqueue(rootAssembly);
+        }
+
+        // Loop through Assemblies until empty
+        while (queue.Any())
+        {
+            // Grab one from queue
+            Assembly assembly = queue.Dequeue();
+
+            if ((assembly == null) || string.IsNullOrEmpty(assembly.FullName))
             {
-                instance.ConfigureServices(services, configuration);
+                continue;
+            }
+
+            // Skip if already visited
+            if (visited.Contains(assembly.FullName))
+            {
+                continue;
+            }
+
+            // Mark as visited
+            visited.Add(assembly.FullName);
+
+            // Process this assembly for installers
+            InvokeInstallers(assembly, services, configuration);
+
+            // Get referenced assemblies
+            try
+            {
+                AssemblyName[] references = assembly.GetReferencedAssemblies();
+
+                foreach (var reference in references)
+                {
+                    // Skip Microsoft/System assemblies
+                    if (reference.FullName.StartsWith("System.") ||
+                        reference.FullName.StartsWith("Microsoft."))
+                    {
+                        continue;
+                    }
+
+                    // Skip if already visited
+                    if (visited.Contains(reference.FullName))
+                    {
+                        continue;
+                    }
+
+                    Assembly loadedAssembly = Assembly.Load(reference);
+                    queue.Enqueue(loadedAssembly);
+                }
+            }
+            catch (Exception)
+            {
+                // Failed to get referenced assemblies, continue with next assembly
             }
         }
     }
 
+    #endregion Public Methods
+
+    #region Private Methods
+
     /// <summary>
     /// Locates instances of a specific Type.
     /// </summary>
-    /// <typeparam name="TInterface">Object type to locate.</typeparam>
+    /// <param name="assembly">Assembly to scan.</param>
     /// <returns>List of classes that have implemented an interface.</returns>
-    private static IEnumerable<Type> GetImplementations<TInterface>()
+    private static IList<IServiceCollectionInstaller> GetImplementations(Assembly assembly)
     {
-        // Get the Type object for the target interface
-        Type interfaceType = typeof(TInterface);
+        // Get public classes that implement from IServiceCollectionInstaller
+        var installerInstances = assembly.GetExportedTypes()
+                                        .Where(x => InterfaceType.IsAssignableFrom(x) &&
+                                                    x is { IsAbstract: false, IsInterface: false })
+                                        .Select(Activator.CreateInstance)
+                                        .Cast<IServiceCollectionInstaller>()
+                                        .ToList();
 
-        // Iterate through all loaded assemblies in the current AppDomain
-        var implementations = AppDomain.CurrentDomain.GetAssemblies()
-            .SelectMany(assembly =>
-            {
-                try
-                {
-                    // Attempt to get all types from the assembly
-                    return assembly.GetTypes();
-                }
-                catch (ReflectionTypeLoadException)
-                {
-                    // Handle cases where an assembly might not load all its types
-                    // (e.g., missing dependencies). Just ignore the problem types
-                    // for this search.
-                    return new Type[0];
-                }
-            })
-            .Where(type =>
-
-                // Ensure the type is a class and not abstract
-                type.IsClass && !type.IsAbstract &&
-
-                // Check if the type implements the interface
-                interfaceType.IsAssignableFrom(type));
-
-        return implementations;
+        return installerInstances;
     }
+
+    /// <summary>
+    /// Invokes instances of IServiceCollectionInstaller.
+    /// </summary>
+    /// <param name="assembly">Assembly to scan for instances of IServiceCollectionInstaller.</param>
+    /// <param name="services">Specifies the contract for a collection of service descriptors.</param>
+    /// <param name="configuration">Represents a set of key/value application configuration properties.</param>
+    private static void InvokeInstallers(Assembly assembly, IServiceCollection services, IConfiguration configuration)
+    {
+        // Locate instances of IServiceCollectionInstaller
+        var implementations = GetImplementations(assembly);
+
+        foreach (var implemenation in implementations)
+        {
+            implemenation.ConfigureServices(services, configuration);
+        }
+    }
+
+    #endregion Private Methods
 }
