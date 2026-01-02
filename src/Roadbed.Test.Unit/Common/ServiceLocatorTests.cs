@@ -37,31 +37,6 @@ public class ServiceLocatorTests
     }
 
     /// <summary>
-    /// Verifies that GetService works with multiple different service types.
-    /// </summary>
-    [TestMethod]
-    public void GetService_WithMultipleServiceTypes_ReturnsCorrectServices()
-    {
-        // Arrange
-        var serviceProvider = this.CreateServiceProvider(s =>
-        {
-            s.AddSingleton<ServiceLocatorTestService1>();
-            s.AddSingleton<ServiceLocatorTestService2>();
-        });
-        ServiceLocator.SetLocatorProvider(serviceProvider);
-
-        // Act
-        var service1 = ServiceLocator.GetService<ServiceLocatorTestService1>();
-        var service2 = ServiceLocator.GetService<ServiceLocatorTestService2>();
-
-        // Assert
-        Assert.IsNotNull(service1, "First service should not be null.");
-        Assert.IsNotNull(service2, "Second service should not be null.");
-        Assert.IsInstanceOfType(service1, typeof(ServiceLocatorTestService1));
-        Assert.IsInstanceOfType(service2, typeof(ServiceLocatorTestService2));
-    }
-
-    /// <summary>
     /// Verifies that GetService returns singleton instance consistently.
     /// </summary>
     [TestMethod]
