@@ -20,20 +20,24 @@ public class ServiceCollectionExtensionsTests
     [TestMethod]
     public void InstallFromAssembly_WithInstallers_ExecutesAllInstallers()
     {
-        // Arrange
+        // Arrange (Given)
         var services = new ServiceCollection();
         var configuration = new ConfigurationBuilder().Build();
 
-        // Act
+        // Act (When)
         services.InstallFromAssembly<ServiceCollectionExtensionsTests>(configuration);
         var serviceProvider = services.BuildServiceProvider();
 
-        // Assert
+        // Assert (Then)
         var service1 = serviceProvider.GetService<TestService1>();
         var service2 = serviceProvider.GetService<TestService2>();
 
-        Assert.IsNotNull(service1, "TestService1 should be registered by TestInstaller1.");
-        Assert.IsNotNull(service2, "TestService2 should be registered by TestInstaller2.");
+        Assert.IsNotNull(
+            service1,
+            "TestService1 should be registered by TestInstaller1.");
+        Assert.IsNotNull(
+            service2,
+            "TestService2 should be registered by TestInstaller2.");
     }
 
     /// <summary>
@@ -42,19 +46,23 @@ public class ServiceCollectionExtensionsTests
     [TestMethod]
     public void InstallFromAssembly_WithMultipleInstallers_RegistersAllServices()
     {
-        // Arrange
+        // Arrange (Given)
         var services = new ServiceCollection();
         var configuration = new ConfigurationBuilder().Build();
 
-        // Act
+        // Act (When)
         services.InstallFromAssembly<ServiceCollectionExtensionsTests>(configuration);
 
-        // Assert
+        // Assert (Then)
         var descriptor1 = services.FirstOrDefault(x => x.ServiceType == typeof(TestService1));
         var descriptor2 = services.FirstOrDefault(x => x.ServiceType == typeof(TestService2));
 
-        Assert.IsNotNull(descriptor1, "TestService1 should be in service collection.");
-        Assert.IsNotNull(descriptor2, "TestService2 should be in service collection.");
+        Assert.IsNotNull(
+            descriptor1,
+            "TestService1 should be in service collection.");
+        Assert.IsNotNull(
+            descriptor2,
+            "TestService2 should be in service collection.");
     }
 
     /// <summary>
@@ -63,24 +71,171 @@ public class ServiceCollectionExtensionsTests
     [TestMethod]
     public void InstallFromAssembly_RegistersServices_InOrder()
     {
-        // Arrange
+        // Arrange (Given)
         var services = new ServiceCollection();
         var configuration = new ConfigurationBuilder().Build();
 
-        // Act
+        // Act (When)
         services.InstallFromAssembly<ServiceCollectionExtensionsTests>(configuration);
 
-        // Assert
-        Assert.IsGreaterThan(0, services.Count, "Services should be registered.");
+        // Assert (Then)
+        Assert.IsGreaterThan(
+            0,
+            services.Count,
+            "Services should be registered.");
 
         var hasTestService1 = services.Any(x => x.ServiceType == typeof(TestService1));
         var hasTestService2 = services.Any(x => x.ServiceType == typeof(TestService2));
 
-        Assert.IsTrue(hasTestService1, "TestService1 should be registered.");
-        Assert.IsTrue(hasTestService2, "TestService2 should be registered.");
+        Assert.IsTrue(
+            hasTestService1,
+            "TestService1 should be registered.");
+        Assert.IsTrue(
+            hasTestService2,
+            "TestService2 should be registered.");
     }
 
-    #endregion
+    #endregion InstallFromAssembly Tests
+
+    #region InstallModulesInAppDomain Tests
+
+    /// <summary>
+    /// Unit test to verify that InstallModulesInAppDomain finds and executes installers from all loaded assemblies.
+    /// </summary>
+    [TestMethod]
+    public void InstallModulesInAppDomain_WithInstallers_ExecutesAllInstallers()
+    {
+        // Arrange (Given)
+        var services = new ServiceCollection();
+        var configuration = new ConfigurationBuilder().Build();
+
+        // Act (When)
+        services.InstallModulesInAppDomain(configuration);
+        var serviceProvider = services.BuildServiceProvider();
+
+        // Assert (Then)
+        var service1 = serviceProvider.GetService<TestService1>();
+        var service2 = serviceProvider.GetService<TestService2>();
+
+        Assert.IsNotNull(
+            service1,
+            "TestService1 should be registered by installer found in AppDomain.");
+        Assert.IsNotNull(
+            service2,
+            "TestService2 should be registered by installer found in AppDomain.");
+    }
+
+    /// <summary>
+    /// Unit test to verify that InstallModulesInAppDomain registers services from multiple installers across assemblies.
+    /// </summary>
+    [TestMethod]
+    public void InstallModulesInAppDomain_WithMultipleInstallers_RegistersAllServices()
+    {
+        // Arrange (Given)
+        var services = new ServiceCollection();
+        var configuration = new ConfigurationBuilder().Build();
+
+        // Act (When)
+        services.InstallModulesInAppDomain(configuration);
+
+        // Assert (Then)
+        var descriptor1 = services.FirstOrDefault(x => x.ServiceType == typeof(TestService1));
+        var descriptor2 = services.FirstOrDefault(x => x.ServiceType == typeof(TestService2));
+
+        Assert.IsNotNull(
+            descriptor1,
+            "TestService1 should be in service collection from AppDomain scan.");
+        Assert.IsNotNull(
+            descriptor2,
+            "TestService2 should be in service collection from AppDomain scan.");
+    }
+
+    /// <summary>
+    /// Unit test to verify that InstallModulesInAppDomain does not register services from abstract installers.
+    /// </summary>
+    [TestMethod]
+    public void InstallModulesInAppDomain_WithAbstractInstaller_DoesNotRegisterAbstractServices()
+    {
+        // Arrange (Given)
+        var services = new ServiceCollection();
+        var configuration = new ConfigurationBuilder().Build();
+
+        // Act (When)
+        services.InstallModulesInAppDomain(configuration);
+        var serviceProvider = services.BuildServiceProvider();
+
+        // Assert (Then)
+        var abstractService = serviceProvider.GetService<AbstractTestService>();
+
+        Assert.IsNull(
+            abstractService,
+            "AbstractTestService should not be registered because its installer is abstract.");
+    }
+
+    /// <summary>
+    /// Unit test to verify that InstallModulesInAppDomain passes configuration to installers correctly.
+    /// </summary>
+    [TestMethod]
+    public void InstallModulesInAppDomain_WithConfiguration_PassesConfigurationToInstallers()
+    {
+        // Arrange (Given)
+        var services = new ServiceCollection();
+        var configurationData = new Dictionary<string, string>
+        {
+            { "TestKey", "TestValue" },
+        };
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(configurationData!)
+            .Build();
+
+        // Act (When)
+        services.InstallModulesInAppDomain(configuration);
+        var serviceProvider = services.BuildServiceProvider();
+
+        // Assert (Then)
+        var configService = serviceProvider.GetService<ConfigurationTestService>();
+
+        Assert.IsNotNull(
+            configService,
+            "ConfigurationTestService should be registered.");
+        Assert.AreEqual(
+            "TestValue",
+            configService.ConfigValue,
+            "Configuration value should be passed to installer and used in service registration.");
+    }
+
+    /// <summary>
+    /// Unit test to verify that InstallModulesInAppDomain handles assemblies with reflection errors gracefully.
+    /// </summary>
+    [TestMethod]
+    public void InstallModulesInAppDomain_WithReflectionErrors_ContinuesProcessing()
+    {
+        // Arrange (Given)
+        var services = new ServiceCollection();
+        var configuration = new ConfigurationBuilder().Build();
+
+        // Act (When)
+        bool exceptionThrown = false;
+        try
+        {
+            services.InstallModulesInAppDomain(configuration);
+        }
+        catch (Exception)
+        {
+            exceptionThrown = true;
+        }
+
+        // Assert (Then)
+        Assert.IsFalse(
+            exceptionThrown,
+            "InstallModulesInAppDomain should handle reflection errors gracefully without throwing exceptions.");
+        Assert.IsGreaterThan(
+            0,
+            services.Count,
+            "Services should still be registered despite potential reflection errors in some assemblies.");
+    }
+
+    #endregion InstallModulesInAppDomain Tests
 
     #region Test Helper Classes and Installers
 
@@ -267,5 +422,5 @@ public class ServiceCollectionExtensionsTests
         }
     }
 
-    #endregion
+    #endregion Test Helper Classes and Installers
 }
