@@ -24,7 +24,6 @@ public class IoCsvFile<T>
     /// <summary>
     /// Initializes a new instance of the <see cref="IoCsvFile{T}"/> class.
     /// </summary>
-    /// <param name="fileInfo">System information about the file.</param>
     /// <param name="dataMapper">Data mapper used to turn lines in the CSV into a <see cref="IList{T}"/>.</param>
     protected IoCsvFile(ICsvEntityMapper<T> dataMapper)
     {
@@ -122,7 +121,6 @@ public class IoCsvFile<T>
     /// <summary>
     /// Exports the <see cref="DataRows"/> property as a content string.
     /// </summary>
-    /// <param name="content">In-memory content to use to fill the <see cref="DataRows"/> property.</param>
     /// <returns>Content string formatted as a CSV.</returns>
     public string ExportDataRowsAsContentString()
     {
@@ -163,7 +161,6 @@ public class IoCsvFile<T>
     /// <summary>
     /// Fills the <see cref="DataRows"/> property by reading the CSV content from the <see cref="IoFileInfo"/>.
     /// </summary>
-    /// <param name="content">In-memory content to use to fill the <see cref="DataRows"/> property.</param>
     public void LoadDataRowsFromFile()
     {
         // Validate "In" Properties
@@ -185,7 +182,12 @@ public class IoCsvFile<T>
 
                     while (csvReader.Read())
                     {
-                        this.DataRows.Add(this.DataMapper!.MapEntity(csvReader));
+                        var obj = this.DataMapper!.MapEntity(csvReader);
+
+                        if (obj is not null)
+                        {
+                            this.DataRows.Add(obj);
+                        }
                     }
                 }
             }
@@ -214,14 +216,19 @@ public class IoCsvFile<T>
 
                 while (csvReader.Read())
                 {
-                    this.DataRows.Add(this.DataMapper!.MapEntity(csvReader));
+                    var obj = this.DataMapper!.MapEntity(csvReader);
+
+                    if (obj is not null)
+                    {
+                        this.DataRows.Add(obj);
+                    }
                 }
             }
         }
     }
 
     /// <summary>
-    /// Saves the file content to the file path specified in <see cref="IoCsvFile{T}.FullPath"/>.
+    /// Saves the file content to the file path specified in <see cref="IoFile.IoFile(IoFileInfo)"/>.
     /// </summary>
     /// <returns>Path to the file that was saved.</returns>
     public string Save()
@@ -230,7 +237,7 @@ public class IoCsvFile<T>
     }
 
     /// <summary>
-    /// Saves the file content to the file path specified in <see cref="IoCsvFile{T}.FullPath"/>.
+    /// Saves the file content to the file path specified in <see cref="IoFile.IoFile(IoFileInfo)"/>.
     /// </summary>
     /// <param name="configuration">CsvHelper configuration used in the export process.</param>
     /// <returns>Path to the file that was saved.</returns>

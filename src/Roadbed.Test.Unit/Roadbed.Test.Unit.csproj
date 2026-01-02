@@ -10,6 +10,16 @@
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+	  <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+	  <WarningLevel>3</WarningLevel>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+	  <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+	  <WarningLevel>3</WarningLevel>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<Compile Remove="Common\CommonTaskExtensionTests.cs" />
 		<Compile Remove="Crud\Mocks\UnitCountry.cs" />

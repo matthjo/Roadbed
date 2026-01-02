@@ -49,7 +49,7 @@ public abstract class IoFile
     #region Public Methods
 
     /// <summary>
-    /// Saves the file content to the file path specified in <see cref="IoFile.FullPath"/>.
+    /// Saves the file content to the file path specified in <see cref="IoFile.IoFile(IoFileInfo)"/>.
     /// </summary>
     /// <param name="fileContent">Content of the file to be saved.</param>
     /// <returns>Path to the file that was saved.</returns>

@@ -13,5 +13,5 @@ public interface ICsvEntityMapper<out T>
     /// </summary>
     /// <param name="reader">Reads data that was parsed from <see cref="IParser" />.</param>
     /// <returns>Entity populated with data from the row in the CSV File..</returns>
-    T MapEntity(CsvReader reader);
+    T? MapEntity(CsvReader reader);
 }
